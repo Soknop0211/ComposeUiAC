@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">ACLEDA COMPOSE</string>
+    <string name="title_activity_more_service">MoreServiceActivity</string>
+    <string name="unable_to_read_image">Unable to read image</string>
+</resources>
