@@ -22,6 +22,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -100,6 +101,9 @@ import com.example.aceledacomposeui.ui.theme.SecondYellow
 import com.example.aceledacomposeui.ui.theme.TransparentLight
 import com.example.aceledacomposeui.ui.theme.White
 import com.example.aceledacomposeui.ui.theme.Yellow
+import com.example.aceledacomposeui.utils.Screen
+import com.example.aceledacomposeui.utils.Utils.getListExtraHomeMenu
+import com.example.aceledacomposeui.utils.Utils.getListHomeMenu
 import com.example.aceledacomposeui.utils.fontFamily
 import com.example.aceledacomposeui.view_model.HomeViewModel
 import com.google.accompanist.pager.ExperimentalPagerApi
@@ -356,120 +360,6 @@ fun DrawerContent(avController: NavController, mProfileClick: () -> Unit, mOnCli
 
     }
 }
-
-// Data
-private fun getListHomeMenu(): ArrayList<HomeItemModel> {
-    return arrayListOf(
-        HomeItemModel(
-            "payment",
-            "Payments",
-            R.drawable.ic_payment,
-        ),
-        HomeItemModel(
-            "top_up",
-            "Mobile Top-up",
-            R.drawable.ic_mobile_topup,
-        ),
-        HomeItemModel(
-            "transfers",
-            "Transfers",
-            R.drawable.ic_transfer,
-        ),
-        HomeItemModel(
-            "pay_me",
-            "Pay-Me",
-            R.drawable.ic_payme,
-        ),
-        HomeItemModel(
-            "scan_qr",
-            "Scan QR",
-            R.drawable.ic_qrcode_home,
-        ),
-        HomeItemModel(
-            "account",
-            "Accounts",
-            R.drawable.ic_account_payment,
-        ),
-        HomeItemModel(
-            "deposits",
-            "Deposits",
-            R.drawable.baseline_auto_graph_24,
-        ),
-        HomeItemModel(
-            "loan",
-            "Loans",
-            R.drawable.ic_loan,
-        ),
-        HomeItemModel(
-            "quick_cash",
-            "Quick Cash",
-            R.drawable.ic_quick_cash,
-        )
-    )
-}
-
-private fun getListExtraHomeMenu(): ArrayList<HomeExtraModel> {
-    return arrayListOf(
-        HomeExtraModel(
-            "favorites",
-            "Favorites",
-            "Save recipient information for quick transaction.",
-            false,
-            R.drawable.ic_favorite,
-        ),
-
-        HomeExtraModel(
-            "exchange_rate",
-            "Exchange Rate",
-            "",
-            true,
-            R.drawable.ic_currency_exchange,
-        ),
-
-        HomeExtraModel(
-            "other_service",
-            "Other Service With Partners",
-            "",
-            false,
-            R.drawable.ic_dashboard,
-        ),
-
-        HomeExtraModel(
-            "promotion",
-            "Promotions",
-            "More discounts and special offer from ACLEDA's Partners.",
-            false,
-            R.drawable.ic_promotion,
-        ),
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun HomePreview() {
-    AceledaComposeUITheme {
-        // ContentLayout()
-
-        // LazyVerticalGridList()
-
-        /*CardCustomServiceItem(
-            HomeExtraModel("", "Exchange Rating", "", true, 0)
-        )*/
-
-        /*CardSpecialItem(
-            HomeExtraModel(
-                "favorites",
-                "Favorites",
-                "Save recipient information for quick transaction.",
-                false,
-                R.drawable.ic_favorite,
-            )
-        )*/
-
-        InitSlider()
-    }
-}
-
 
 @androidx.annotation.OptIn(ExperimentalGetImage::class)
 @Composable
@@ -830,6 +720,28 @@ fun ContentList(
                 }
             }
 
+            // Exit Button
+            Row(
+                modifier = Modifier
+                    .wrapContentWidth()
+                    .padding(16.dp)
+                    .align(Alignment.CenterHorizontally)
+                    .background(
+                        color = SecondYellow,
+                        shape = RoundedCornerShape(20.dp)
+                    )
+                    .clickable {
+                        avController.navigate(AppScreen.HomeNewScreen.route)
+                    },
+            ) {
+                Text(
+                    text = "New Home",
+                    modifier = Modifier.padding(start = 10.dp, end = 10.dp, top = 3.dp, bottom = 5.dp),
+                    fontFamily = FontFamily(Font(R.font.montserrat_medium_body)),
+                    color = White,
+                    style = TextStyle(fontSize = 18.sp)
+                )
+            }
         }
     }
 }
@@ -1055,21 +967,6 @@ fun CustomIconTop(onClick: () -> Unit, icon: ImageVector) {
     }
 }
 
-sealed class Screen(val title: String, val logo: Int) {
-    object CountryLanguage : Screen("Country and Language", R.drawable.baseline_language_24)
-    object Setting : Screen("Setting", R.drawable.baseline_settings_24)
-    object Location : Screen("Locatoin", R.drawable.baseline_map_24)
-    object TermsCondition :
-        Screen("Terms and Condition", R.drawable.baseline_format_list_bulleted_24)
-
-    object SecurityTip : Screen("Security Tips", R.drawable.baseline_security_24)
-    object FAQs : Screen("FAQs", R.drawable.baseline_question_answer_24)
-    object InviteFriends : Screen("Invite Friends", R.drawable.baseline_person_add_alt_1_24)
-    object ACLEDABankStock : Screen("ACLEDA Bank Stock", R.drawable.baseline_auto_graph_24)
-    object CustomerLoyalty : Screen("Customer Loyalty", R.drawable.baseline_loyalty_24)
-    object CustomerUs : Screen("Contact Us(24/7)", R.drawable.baseline_local_phone_24)
-    object Help : Screen("Help", R.drawable.baseline_help_24)
-}
 
 val screens = listOf(
     Screen.CountryLanguage, Screen.Setting, Screen.Location,
@@ -1077,3 +974,45 @@ val screens = listOf(
     Screen.InviteFriends, Screen.ACLEDABankStock, Screen.CustomerLoyalty,
     Screen.CustomerUs, Screen.Help
 )
+
+
+@Preview(showBackground = true)
+@Composable
+fun HomePreview() {
+    AceledaComposeUITheme {
+        // ContentLayout()
+
+        // LazyVerticalGridList()
+
+        /*CardCustomServiceItem(
+            HomeExtraModel("", "Exchange Rating", "", true, 0)
+        )*/
+
+        /*CardSpecialItem(
+            HomeExtraModel(
+                "favorites",
+                "Favorites",
+                "Save recipient information for quick transaction.",
+                false,
+                R.drawable.ic_favorite,
+            )
+        )*/
+
+        /*InitSlider()*/
+        Row(
+            modifier = Modifier
+                .wrapContentWidth()
+                .padding(16.dp)
+                .background(
+                    color = Color.Cyan,
+                    shape = RoundedCornerShape(10.dp)
+                )
+        ) {
+            Text(
+                text = "New Home",
+                modifier = Modifier.padding(10.dp),
+                fontSize = 16.sp
+            )
+        }
+    }
+}

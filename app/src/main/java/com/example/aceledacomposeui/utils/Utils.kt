@@ -9,6 +9,8 @@ import android.net.Uri
 import android.provider.MediaStore
 import android.widget.Toast
 import com.example.aceledacomposeui.R
+import com.example.aceledacomposeui.model.HomeExtraModel
+import com.example.aceledacomposeui.model.HomeItemModel
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.IOException
@@ -79,4 +81,142 @@ object Utils {
         matrix.postRotate(degrees.toFloat())
         return Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
     }
+
+    fun getListHomeMenu(): ArrayList<HomeItemModel> {
+        return arrayListOf(
+            HomeItemModel(
+                "payment",
+                "Payments",
+                R.drawable.ic_payment,
+            ),
+            HomeItemModel(
+                "top_up",
+                "Mobile Top-up",
+                R.drawable.ic_mobile_topup,
+            ),
+            HomeItemModel(
+                "transfers",
+                "Transfers",
+                R.drawable.ic_transfer,
+            ),
+            HomeItemModel(
+                "pay_me",
+                "Pay-Me",
+                R.drawable.ic_payme,
+            ),
+            HomeItemModel(
+                "scan_qr",
+                "Scan QR",
+                R.drawable.ic_qrcode_home,
+            ),
+            HomeItemModel(
+                "account",
+                "Accounts",
+                R.drawable.ic_account_payment,
+            ),
+            HomeItemModel(
+                "deposits",
+                "Deposits",
+                R.drawable.baseline_auto_graph_24,
+            ),
+            HomeItemModel(
+                "loan",
+                "Loans",
+                R.drawable.ic_loan,
+            ),
+            HomeItemModel(
+                "quick_cash",
+                "Quick Cash",
+                R.drawable.ic_quick_cash,
+            )
+        )
+    }
+
+    fun getListExtraHomeMenu(): ArrayList<HomeExtraModel> {
+        return arrayListOf(
+            HomeExtraModel(
+                "smart",
+                "Smart",
+                "Save recipient information for quick transaction.",
+                false,
+                R.drawable.ic_favorite,
+            ),
+
+            HomeExtraModel(
+                "metfone",
+                "Metfone",
+                "",
+                true,
+                R.drawable.ic_currency_exchange,
+            ),
+
+            HomeExtraModel(
+                "cellcard",
+                "Cellcard",
+                "",
+                false,
+                R.drawable.ic_dashboard,
+            ),
+
+            HomeExtraModel(
+                "seatel",
+                "Seatel",
+                "More discounts and special offer from ACLEDA's Partners.",
+                false,
+                R.drawable.ic_promotion,
+            ),
+        )
+    }
+
+    fun getListRecentTransfer(): ArrayList<HomeExtraModel> {
+        return arrayListOf(
+            HomeExtraModel(
+                "1",
+                "Bo Bora",
+                "Save recipient information for quick transaction.",
+                false,
+                R.drawable.ic_favorite,
+            ),
+
+            HomeExtraModel(
+                "2",
+                "Sok Pesey Dara Pich",
+                "",
+                true,
+                R.drawable.ic_currency_exchange,
+            ),
+
+            HomeExtraModel(
+                "3",
+                "Seth",
+                "",
+                false,
+                R.drawable.ic_dashboard,
+            ),
+
+            HomeExtraModel(
+                "4",
+                "Yora",
+                "More discounts and special offer from ACLEDA's Partners.",
+                false,
+                R.drawable.ic_promotion,
+            ),
+
+            HomeExtraModel(
+                "5",
+                "Peseth",
+                "More discounts and special offer from ACLEDA's Partners.",
+                false,
+                R.drawable.ic_promotion,
+            ),
+            HomeExtraModel(
+                "6",
+                "Khmer",
+                "More discounts and special offer from ACLEDA's Partners.",
+                false,
+                R.drawable.ic_promotion,
+            ),
+        )
+    }
+
 }

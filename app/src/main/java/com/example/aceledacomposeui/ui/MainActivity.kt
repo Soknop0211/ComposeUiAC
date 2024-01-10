@@ -115,6 +115,7 @@ import com.example.aceledacomposeui.ui.theme.SecondYellow
 import com.example.aceledacomposeui.ui.theme.TransparentLight
 import com.example.aceledacomposeui.ui.theme.White
 import com.example.aceledacomposeui.ui.theme.Yellow
+import com.example.aceledacomposeui.ui.ui.HomeNewScreen
 import com.example.aceledacomposeui.ui.ui.HomeScreenKt
 import com.example.aceledacomposeui.ui.ui.NotificationKt
 import com.example.aceledacomposeui.ui.ui.ProfileKt
@@ -176,6 +177,10 @@ fun NavDatabaseGraph() {
 
         composable(route = AppScreen.ProfileScreen.route) {
             ProfileKt(navController)
+        }
+
+        composable(route = AppScreen.HomeNewScreen.route) {
+            HomeNewScreen(navController)
         }
 
         /* composable(
