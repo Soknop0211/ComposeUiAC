@@ -82,10 +82,12 @@ import com.example.aceledacomposeui.ui.screen.AppScreen
 import com.example.aceledacomposeui.ui.theme.AceledaBankLogo
 import com.example.aceledacomposeui.ui.theme.AceledaComposeUITheme
 import com.example.aceledacomposeui.ui.theme.AcledaAppLogo
+import com.example.aceledacomposeui.ui.theme.Black
 import com.example.aceledacomposeui.ui.theme.BlueLightTxt
 import com.example.aceledacomposeui.ui.theme.BlueTxt
 import com.example.aceledacomposeui.ui.theme.Gray
 import com.example.aceledacomposeui.ui.theme.KhQrLogo
+import com.example.aceledacomposeui.ui.theme.LightGray
 import com.example.aceledacomposeui.ui.theme.LightGrayText
 import com.example.aceledacomposeui.ui.theme.Primary
 import com.example.aceledacomposeui.ui.theme.Red
@@ -207,18 +209,24 @@ fun BodyContent() {
 
             RecentTransaction(horizontalDp)
 
-            SliderRecommended()
+            Column (
+                modifier = Modifier
+                    .background(color = LightGray)
+            ){
+                SliderRecommended()
 
-            SpecialServiceList()
+                SpecialServiceList()
 
-            SpecialOfferList(horizontalDp, localDensity)
+                SpecialOfferList(horizontalDp, localDensity)
 
-            CallCenterList(horizontalDp, localDensity)
+                CallCenterList(horizontalDp, localDensity)
 
-            SliderRecommended(mIsAdvertise = true)
+                SliderRecommended(mIsAdvertise = true)
 
-            Spacer(modifier = Modifier.padding(10.dp))
-            // CustomServiceFavorite(horizontalDp)
+                Spacer(modifier = Modifier.padding(10.dp))
+
+                /* CustomServiceFavorite(horizontalDp) */
+            }
 
         }
     }
@@ -442,7 +450,7 @@ private fun CardCategoriesItem2(index : Int) {
                         verticalAlignment = Alignment.CenterVertically
                     ){
                         Text(
-                            text = "Exchange Rate",
+                            text = "Total Banlance",
                             style = TextStyle(color = White),
                             textAlign = TextAlign.Start,
                             maxLines = 2
@@ -455,12 +463,12 @@ private fun CardCategoriesItem2(index : Int) {
                                 .background(Primary, shape = CircleShape)
                         ){
                             Icon(
-                                painter = painterResource(id = R.drawable.ic_currency_exchange),
+                                painter = painterResource(id = R.drawable.ic_account_payment),
                                 contentDescription = "android image",
                                 tint = White,
                                 modifier = Modifier
                                     .size(20.dp)
-                                    .padding(horizontal = 5.dp)
+                                    .padding(start = 5.dp)
                             )
                         }
                     }
@@ -490,7 +498,7 @@ private fun CardCategoriesItem2(index : Int) {
                             )
                         }
                         Text(
-                            text = "1$",
+                            text = "100$",
                             style = TextStyle(color = White),
                             textAlign = TextAlign.Start,
                             maxLines = 2,
@@ -524,7 +532,7 @@ private fun CardCategoriesItem2(index : Int) {
                             )
                         }
                         Text(
-                            text = "4088R",
+                            text = "400,088R",
                             style = TextStyle(color = White),
                             textAlign = TextAlign.Start,
                             maxLines = 2,
@@ -575,8 +583,8 @@ private fun CardCategoriesItem2(index : Int) {
                         )
 
                         Text(
-                            text = "Acleda Services",
-                            style = TextStyle(color = LightGrayText),
+                            text = "1$ = 4088R",
+                            style = TextStyle(color = LightGray),
                             textAlign = TextAlign.Start,
                             fontSize = 13.sp,
                             maxLines = 1
@@ -645,7 +653,7 @@ private fun CardRecentTransactionItem(end : Dp = 0.dp, it : HomeExtraModel) {
             .padding(top = 8.dp, bottom = 8.dp, start = 8.dp, end = end)
             .width(width)
             .wrapContentHeight(),
-        backgroundColor = SecondPrimary,
+        backgroundColor = White,
         shape = RoundedCornerShape(corner = CornerSize(15.dp)),
         elevation = 6.dp,
     ) {
@@ -675,7 +683,7 @@ private fun CardRecentTransactionItem(end : Dp = 0.dp, it : HomeExtraModel) {
             ){
                 androidx.compose.material.Text(
                     text = it.name,
-                    color = White,
+                    color = Black,
                     style = TextStyle(fontSize = 12.sp, color = White, fontWeight = FontWeight.Normal),
                     textAlign = TextAlign.Center,
                     overflow = TextOverflow.Ellipsis,
@@ -705,14 +713,14 @@ private fun SliderRecommended(mIsAdvertise : Boolean = false) {
                     .wrapContentSize(),
                 text = if (mIsAdvertise) "Advertise" else "Recommended",
                 fontFamily = FontFamily(Font(R.font.montserrat_medium_body)),
-                color = White,
+                color = Black,
                 style = TextStyle(fontSize = 18.sp)
             )
 
             Icon(
                 painter = painterResource(id = R.drawable.baseline_more_horiz_24),
                 contentDescription = "contentDescription",
-                tint = White
+                tint = Black
             )
         }
     }
@@ -797,7 +805,7 @@ private fun InitSlider(mIsAdvertise : Boolean = false) {
         if (imageSlider.size > 1) {
             HorizontalPagerIndicator(
                 pagerState = pagerState,
-                activeColor = White,
+                activeColor = Primary,
                 inactiveColor = Yellow,
                 modifier = Modifier
                     .align(Alignment.CenterHorizontally)
@@ -825,14 +833,14 @@ private fun SpecialServiceList() {
                     .weight(weight = 1f, fill = false),
                 text = "Special Recommended",
                 fontFamily = FontFamily(Font(R.font.montserrat_medium_body)),
-                color = White,
+                color = Black,
                 style = TextStyle(fontSize = 18.sp)
             )
 
             Icon(
                 painter = painterResource(id = R.drawable.baseline_more_horiz_24),
                 contentDescription = "contentDescription",
-                tint = White
+                tint = Black
             )
         }
     }
@@ -873,7 +881,7 @@ fun CardSpecialItem(index: Int = 0, end: Dp = 0.dp) {
         Column(
             modifier = Modifier
                 .wrapContentSize()
-                .background(color = SecondPrimary)
+                .background(color = White)
         ) {
             Image(
                 contentScale = ContentScale.FillBounds,
@@ -893,7 +901,7 @@ fun CardSpecialItem(index: Int = 0, end: Dp = 0.dp) {
                         modifier = Modifier
                             .size(20.dp)
                             .align(Alignment.CenterVertically),
-                        painter = painterResource(id = AcledaAppLogo),
+                        painter = painterResource(id = R.drawable.ic_promotion),
                         contentDescription = "Localized description",
                     )
 
@@ -902,7 +910,7 @@ fun CardSpecialItem(index: Int = 0, end: Dp = 0.dp) {
                             .padding(horizontal = 5.dp),
                         text = "Special Recommended Promotion",
                         maxLines = 1,
-                        color = White,
+                        color = Black,
                         fontSize = 16.sp
                     )
 
@@ -913,11 +921,11 @@ fun CardSpecialItem(index: Int = 0, end: Dp = 0.dp) {
                         .padding(vertical = 5.dp)
                 ){
                     androidx.compose.material.Text(
-                        text = "ACLEDA Bank Plc. is a public limited company, formed under the Banking and Financial Institutions Law of the Kingdom of Cambodia. Originally, it was founded in January 1993, as a national NGO for micro and small enterprises' development and credit.",
+                        text = "ACLEDA Bank Plc is a public limited company, formed under the Banking and Financial Institutions Law of the Kingdom of Cambodia. Originally, it was founded in January 1993, as a national NGO for micro and small enterprises' development and credit.",
                         maxLines = 4,
                         minLines = 4,
                         overflow = TextOverflow.Ellipsis,
-                        color = White,
+                        color = Black,
                         fontSize = 14.sp
                     )
                 }
@@ -995,14 +1003,14 @@ private fun SpecialOfferList(horizontalDp : Dp = 10.dp, mDensity : Density = Loc
                     .wrapContentSize(),
                 text = "Special Offer",
                 fontFamily = FontFamily(Font(R.font.montserrat_medium_body)),
-                color = White,
+                color = Black,
                 style = TextStyle(fontSize = 18.sp)
             )
 
             Icon(
                 painter = painterResource(id = R.drawable.baseline_more_horiz_24),
                 contentDescription = "contentDescription",
-                tint = White
+                tint = Black
             )
         }
     }
@@ -1182,14 +1190,14 @@ private fun CallCenterList(horizontalDp : Dp = 10.dp, mDensity : Density = Local
                     .wrapContentSize(),
                 text = "Call Center Service",
                 fontFamily = FontFamily(Font(R.font.montserrat_medium_body)),
-                color = White,
+                color = Black,
                 style = TextStyle(fontSize = 18.sp)
             )
 
             Icon(
                 painter = painterResource(id = R.drawable.baseline_more_horiz_24),
                 contentDescription = "contentDescription",
-                tint = White
+                tint = Black
             )
         }
     }
@@ -1198,7 +1206,7 @@ private fun CallCenterList(horizontalDp : Dp = 10.dp, mDensity : Density = Local
     var columnHeightListDp by remember {
         mutableStateOf(200.dp)
     }
-    val listItem = (1..11).map { it.toString() }
+    val listItem = (1..3).map { it.toString() }
 
     /*1 = 1
     4 = 2
@@ -1236,7 +1244,7 @@ private fun CallCenterList(horizontalDp : Dp = 10.dp, mDensity : Density = Local
             val divisor = 3
             val number = (dividend.toDouble() / divisor.toDouble()).roundToInt() + 1
 
-            ("{$number}").logDebug("jeeeeeeeeeeeeeeeeeeeeeeeeee")
+            ("$number").logDebug("jeeeeeeeeeeeeeeeeeeeeeeeeee")
 
             number
         }
@@ -1261,9 +1269,9 @@ private fun CallCenterList(horizontalDp : Dp = 10.dp, mDensity : Density = Local
         ) {it ->
             val mLogo =
                 if (it % 2 == 0) {
-                    R.drawable.img_qr_code
+                    R.drawable.special_offer
                 } else {
-                    R.drawable.img_interest
+                    R.drawable.promotion_img
                 }
 
             Card(
@@ -1302,6 +1310,6 @@ private fun CallCenterList(horizontalDp : Dp = 10.dp, mDensity : Density = Local
 @Composable
 fun HomeNewPreview() {
     AceledaComposeUITheme {
-        SpecialServiceList()
+        CallCenterList()
     }
 }
