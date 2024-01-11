@@ -8,8 +8,8 @@ import org.burnoutcrew.reorderable.BuildConfig
 
 val fontFamily = FontFamily(Font(R.font.lexend_deca_regular_title))
 
-fun String.logDebug() {
+fun String.logDebug(key : String ?= null) {
     if (BuildConfig.DEBUG) {
-        Log.d("ComposeLogDebug", this)
+        Log.d(key ?: "ComposeLogDebug", this)
     }
 }

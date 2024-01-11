@@ -175,7 +175,7 @@ object Utils {
                 "Bo Bora",
                 "Save recipient information for quick transaction.",
                 false,
-                R.drawable.ic_favorite,
+                R.drawable.boy_user,
             ),
 
             HomeExtraModel(
@@ -183,7 +183,7 @@ object Utils {
                 "Sok Pesey Dara Pich",
                 "",
                 true,
-                R.drawable.ic_currency_exchange,
+                R.drawable.ic_user_profile,
             ),
 
             HomeExtraModel(
@@ -191,7 +191,7 @@ object Utils {
                 "Seth",
                 "",
                 false,
-                R.drawable.ic_dashboard,
+                R.drawable.girl_user,
             ),
 
             HomeExtraModel(
@@ -199,7 +199,7 @@ object Utils {
                 "Yora",
                 "More discounts and special offer from ACLEDA's Partners.",
                 false,
-                R.drawable.ic_promotion,
+                R.drawable.boy_user,
             ),
 
             HomeExtraModel(
@@ -207,14 +207,60 @@ object Utils {
                 "Peseth",
                 "More discounts and special offer from ACLEDA's Partners.",
                 false,
-                R.drawable.ic_promotion,
+                R.drawable.ic_user_profile,
             ),
             HomeExtraModel(
                 "6",
                 "Khmer",
                 "More discounts and special offer from ACLEDA's Partners.",
                 false,
-                R.drawable.ic_promotion,
+                R.drawable.girl_user,
+            ),
+            HomeExtraModel(
+                "1",
+                "Bo Bora",
+                "Save recipient information for quick transaction.",
+                false,
+                R.drawable.boy_user,
+            ),
+
+            HomeExtraModel(
+                "2",
+                "Sok Pesey Dara Pich",
+                "",
+                true,
+                R.drawable.ic_user_profile,
+            ),
+
+            HomeExtraModel(
+                "3",
+                "Seth",
+                "",
+                false,
+                R.drawable.girl_user,
+            ),
+
+            HomeExtraModel(
+                "4",
+                "Yora",
+                "More discounts and special offer from ACLEDA's Partners.",
+                false,
+                R.drawable.boy_user,
+            ),
+
+            HomeExtraModel(
+                "5",
+                "Peseth",
+                "More discounts and special offer from ACLEDA's Partners.",
+                false,
+                R.drawable.ic_user_profile,
+            ),
+            HomeExtraModel(
+                "6",
+                "Khmer",
+                "More discounts and special offer from ACLEDA's Partners.",
+                false,
+                R.drawable.girl_user,
             ),
         )
     }

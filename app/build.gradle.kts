@@ -100,7 +100,6 @@ dependencies {
     // Pager
     implementation("com.google.accompanist:accompanist-pager:0.28.0")
     implementation("com.google.accompanist:accompanist-pager-indicators:0.28.0")
-    implementation("com.google.accompanist:accompanist-pager:0.28.0")
 
     implementation("com.google.accompanist:accompanist-flowlayout:0.20.0")
 
