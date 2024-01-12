@@ -1,0 +1,260 @@
+[
+  {
+    "prefix": "023",
+    "digit": 10,
+    "name": "Cellcard",
+    "logo": "cellcard_logo"
+  },
+  {
+    "prefix": "011",
+    "digit": 9,
+    "name": "Cellcard",
+    "logo": "cellcard_logo"
+  },
+  {
+    "prefix": "012",
+    "digit": 10,
+    "name": "Cellcard",
+    "logo": "cellcard_logo"
+  },
+  {
+    "prefix": "014",
+    "digit": 9,
+    "name": "Cellcard",
+    "logo": "cellcard_logo"
+  },
+  {
+    "prefix": "017",
+    "digit": 9,
+    "name": "Cellcard",
+    "logo": "cellcard_logo"
+  },
+  {
+    "prefix": "061",
+    "digit": 9,
+    "name": "Cellcard",
+    "logo": "cellcard_logo"
+  },
+  {
+    "prefix": "076",
+    "digit": 10,
+    "name": "Cellcard",
+    "logo": "cellcard_logo"
+  },
+  {
+    "prefix": "077",
+    "digit": 9,
+    "name": "Cellcard",
+    "logo": "cellcard_logo"
+  },
+  {
+    "prefix": "078",
+    "digit": 9,
+    "name": "Cellcard",
+    "logo": "cellcard_logo"
+  },
+  {
+    "prefix": "079",
+    "digit": 9,
+    "name": "Cellcard",
+    "logo": "cellcard_logo"
+  },
+  {
+    "prefix": "085",
+    "digit": 9,
+    "name": "Cellcard",
+    "logo": "cellcard_logo"
+  },
+  {
+    "prefix": "089",
+    "digit": 9,
+    "name": "Cellcard",
+    "logo": "cellcard_logo"
+  },
+  {
+    "prefix": "092",
+    "digit": 9,
+    "name": "Cellcard",
+    "logo": "cellcard_logo"
+  },
+  {
+    "prefix": "095",
+    "digit": 9,
+    "name": "Cellcard",
+    "logo": "cellcard_logo"
+  },
+  {
+    "prefix": "099",
+    "digit": 9,
+    "name": "Cellcard",
+    "logo": "cellcard_logo"
+  },
+
+  {
+    "prefix": "038",
+    "digit": 10,
+    "name": "CooTel",
+    "logo": "cootel_logo"
+  },
+
+  {
+    "prefix": "039",
+    "digit": 10,
+    "name": "EMAXX",
+    "logo": "emaxx_logo"
+  },
+
+  {
+    "prefix": "018",
+    "digit": 10,
+    "name": "Seatel",
+    "logo": "seatel_logo"
+  },
+
+  {
+    "prefix": "023",
+    "digit": 10,
+    "name": "Metfone",
+    "logo": "metfone_logo"
+  },
+  {
+    "prefix": "060",
+    "digit": 9,
+    "name": "Metfone",
+    "logo": "metfone_logo"
+  },
+  {
+    "prefix": "066",
+    "digit": 9,
+    "name": "Metfone",
+    "logo": "metfone_logo"
+  },
+  {
+    "prefix": "067",
+    "digit": 9,
+    "name": "Metfone",
+    "logo": "metfone_logo"
+  },
+  {
+    "prefix": "068",
+    "digit": 9,
+    "name": "Metfone",
+    "logo": "metfone_logo"
+  },
+  {
+    "prefix": "071",
+    "digit": 10,
+    "name": "Metfone",
+    "logo": "metfone_logo"
+  },
+  {
+    "prefix": "088",
+    "digit": 10,
+    "name": "Metfone",
+    "logo": "metfone_logo"
+  },
+  {
+    "prefix": "090",
+    "digit": 9,
+    "name": "Metfone",
+    "logo": "metfone_logo"
+  },
+  {
+    "prefix": "097",
+    "digit": 10,
+    "name": "Metfone",
+    "logo": "metfone_logo"
+  },
+
+  {
+    "prefix": "013",
+    "digit": 9,
+    "name": "QB",
+    "logo": "qb_logo"
+  },
+  {
+    "prefix": "080",
+    "digit": 9,
+    "name": "QB",
+    "logo": "qb_logo"
+  },
+  {
+    "prefix": "083",
+    "digit": 9,
+    "name": "QB",
+    "logo": "qb_logo"
+  },
+  {
+    "prefix": "084",
+    "digit": 9,
+    "name": "QB",
+    "logo": "qb_logo"
+  },
+
+  {
+    "prefix": "010",
+    "digit": 9,
+    "name": "Smart",
+    "logo": "smart_logo"
+  },
+  {
+    "prefix": "015",
+    "digit": 9,
+    "name": "Smart",
+    "logo": "smart_logo"
+  },
+  {
+    "prefix": "016",
+    "digit": 9,
+    "name": "Smart",
+    "logo": "smart_logo"
+  },
+  {
+    "prefix": "069",
+    "digit": 9,
+    "name": "Smart",
+    "logo": "smart_logo"
+  },
+  {
+    "prefix": "070",
+    "digit": 9,
+    "name": "Smart",
+    "logo": "smart_logo"
+  },
+  {
+    "prefix": "081",
+    "digit": 9,
+    "name": "Smart",
+    "logo": "smart_logo"
+  },
+  {
+    "prefix": "086",
+    "digit": 9,
+    "name": "Smart",
+    "logo": "smart_logo"
+  },
+  {
+    "prefix": "087",
+    "digit": 9,
+    "name": "Smart",
+    "logo": "smart_logo"
+  },
+  {
+    "prefix": "093",
+    "digit": 9,
+    "name": "Smart",
+    "logo": "smart_logo"
+  },
+  {
+    "prefix": "096",
+    "digit": 10,
+    "name": "Smart",
+    "logo": "smart_logo"
+  },
+  {
+    "prefix": "098",
+    "digit": 9,
+    "name": "Smart",
+    "logo": "smart_logo"
+  }
+]

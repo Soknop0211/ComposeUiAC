@@ -1,6 +1,7 @@
 package com.example.aceledacomposeui.ui.ui
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import androidx.camera.core.ExperimentalGetImage
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
@@ -79,6 +80,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.aceledacomposeui.R
 import com.example.aceledacomposeui.model.HomeExtraModel
 import com.example.aceledacomposeui.ui.screen.AppScreen
+import com.example.aceledacomposeui.ui.screen_activity.MobileTopUpActivity
 import com.example.aceledacomposeui.ui.theme.AceledaBankLogo
 import com.example.aceledacomposeui.ui.theme.AceledaComposeUITheme
 import com.example.aceledacomposeui.ui.theme.AcledaAppLogo
@@ -88,7 +90,6 @@ import com.example.aceledacomposeui.ui.theme.BlueTxt
 import com.example.aceledacomposeui.ui.theme.Gray
 import com.example.aceledacomposeui.ui.theme.KhQrLogo
 import com.example.aceledacomposeui.ui.theme.LightGray
-import com.example.aceledacomposeui.ui.theme.LightGrayText
 import com.example.aceledacomposeui.ui.theme.Primary
 import com.example.aceledacomposeui.ui.theme.Red
 import com.example.aceledacomposeui.ui.theme.SecondPrimary
@@ -113,7 +114,7 @@ import kotlin.math.roundToInt
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeNewScreen(avController: NavController = rememberNavController()) {
+fun HomeNewScreen(avController: NavController = rememberNavController(), mActivity: Activity) {
 
     val verticalGradientBrush = Brush.verticalGradient(
         colors = listOf(
@@ -186,14 +187,14 @@ fun HomeNewScreen(avController: NavController = rememberNavController()) {
             }
         )
 
-        BodyContent()
+        BodyContent(mActivity)
     }
 
 }
 
 @androidx.annotation.OptIn(ExperimentalGetImage::class)
 @Composable
-fun BodyContent() {
+fun BodyContent(mActivity: Activity) {
     val rememberScrollState = rememberScrollState()
     val horizontalDp = 12.dp
     val localDensity = LocalDensity.current
@@ -203,7 +204,7 @@ fun BodyContent() {
             modifier = Modifier
                 .verticalScroll(rememberScrollState),
         ) {
-            CategoriesMenu(horizontalDp, localDensity)
+            CategoriesMenu(localDensity, mActivity)
 
             Categories2Item(horizontalDp)
 
@@ -233,7 +234,7 @@ fun BodyContent() {
 }
 
 @Composable
-private fun CategoriesMenu(horizontalDp : Dp = 10.dp, mDensity : Density = LocalDensity.current) {
+private fun CategoriesMenu(mDensity: Density = LocalDensity.current, mActivity: Activity) {
     var columnHeightDp by remember {
         mutableStateOf(350.dp)
     }
@@ -247,13 +248,13 @@ private fun CategoriesMenu(horizontalDp : Dp = 10.dp, mDensity : Density = Local
     // Color
     val mStartList = listOf(
         ThirdPrimary,
-        ThirdPrimary,
+        Gray,
         Gray
     )
 
     val mEndList = listOf(
         Gray,
-        ThirdPrimary,
+        Gray,
         ThirdPrimary
     )
 
@@ -306,6 +307,11 @@ private fun CategoriesMenu(horizontalDp : Dp = 10.dp, mDensity : Density = Local
 
                             columnHeightDp =
                                 with(mDensity) { lineHeightDp * 3 }
+                        }
+                        .clickable {
+                            if (mList[index].id == "top_up") {
+                                MobileTopUpActivity.start(mActivity)
+                            }
                         },
                     colors = CardDefaults.cardColors(
                         containerColor = ThirdPrimary,
@@ -450,7 +456,7 @@ private fun CardCategoriesItem2(index : Int) {
                         verticalAlignment = Alignment.CenterVertically
                     ){
                         Text(
-                            text = "Total Banlance",
+                            text = "Total Balance",
                             style = TextStyle(color = White),
                             textAlign = TextAlign.Start,
                             maxLines = 2
@@ -463,7 +469,7 @@ private fun CardCategoriesItem2(index : Int) {
                                 .background(Primary, shape = CircleShape)
                         ){
                             Icon(
-                                painter = painterResource(id = R.drawable.ic_account_payment),
+                                painter = painterResource(id = R.drawable.ic_currency_exchange),
                                 contentDescription = "android image",
                                 tint = White,
                                 modifier = Modifier
@@ -795,7 +801,7 @@ private fun InitSlider(mIsAdvertise : Boolean = false) {
                 Image(
                     painter = imageSlider[page],
                     contentDescription = "Slider",
-                    contentScale = ContentScale.FillBounds,
+                    contentScale = ContentScale.Crop,
                     modifier = Modifier
                         .fillMaxSize()
                 )
@@ -889,7 +895,7 @@ fun CardSpecialItem(index: Int = 0, end: Dp = 0.dp) {
                 contentDescription = "android image",
                 modifier = Modifier
                     .fillMaxSize()
-                    .height(150.dp)
+                    .height(130.dp)
             )
             
             Column (
@@ -922,8 +928,8 @@ fun CardSpecialItem(index: Int = 0, end: Dp = 0.dp) {
                 ){
                     androidx.compose.material.Text(
                         text = "ACLEDA Bank Plc is a public limited company, formed under the Banking and Financial Institutions Law of the Kingdom of Cambodia. Originally, it was founded in January 1993, as a national NGO for micro and small enterprises' development and credit.",
-                        maxLines = 4,
-                        minLines = 4,
+                        maxLines = 3,
+                        minLines = 3,
                         overflow = TextOverflow.Ellipsis,
                         color = Black,
                         fontSize = 14.sp
@@ -1292,7 +1298,7 @@ private fun CallCenterList(horizontalDp : Dp = 10.dp, mDensity : Density = Local
 
                 ) {
                     Image(
-                        contentScale = ContentScale.FillBounds,
+                        contentScale = ContentScale.Crop,
                         painter = painterResource(id = mLogo),
                         contentDescription = "android image",
                         modifier = Modifier

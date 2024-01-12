@@ -1,5 +1,6 @@
 package com.example.aceledacomposeui.utils
 
+import android.app.Activity
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -7,13 +8,19 @@ import android.graphics.Matrix
 import android.media.ExifInterface
 import android.net.Uri
 import android.provider.MediaStore
+import android.view.View
+import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import com.example.aceledacomposeui.R
 import com.example.aceledacomposeui.model.HomeExtraModel
 import com.example.aceledacomposeui.model.HomeItemModel
+import com.example.aceledacomposeui.model.MobilePhonesData
+import com.google.gson.Gson
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.IOException
+import java.lang.reflect.Type
+import java.nio.charset.StandardCharsets
 
 
 object Utils {
@@ -265,4 +272,30 @@ object Utils {
         )
     }
 
+    fun getMobileList(mContext: Context): List<MobilePhonesData> {
+        val jsonFileString: String? = getJsonFromAssets(mContext, "MobilePhones.json")
+        (jsonFileString ?: "null").logDebug("logidebkijeejjjeehe")
+
+        val gson = Gson()
+        val listUserType: Type = object :
+            com.google.gson.reflect.TypeToken<List<MobilePhonesData?>?>() {}.type
+
+        return gson.fromJson(jsonFileString, listUserType)
+
+    }
+
+    private fun getJsonFromAssets(context: Context, fileName: String?): String? {
+        val jsonString: String = try {
+            val isAssets = context.assets.open(fileName!!)
+            val size = isAssets.available()
+            val buffer = ByteArray(size)
+            isAssets.read(buffer)
+            isAssets.close()
+            String(buffer, StandardCharsets.UTF_8)
+        } catch (e: IOException) {
+            e.printStackTrace()
+            return null
+        }
+        return jsonString
+    }
 }
