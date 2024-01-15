@@ -48,7 +48,7 @@ class HomeViewModel @Inject constructor(
         fetchListHome()
     }
 
-    fun fetchListHome() {
+    private fun fetchListHome() {
         viewModelScope.launch {
             PreferenceManager.getString(HomeItemList, mContext).let {
                 if (!TextUtils.isEmpty(it)){

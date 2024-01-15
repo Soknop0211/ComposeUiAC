@@ -5,4 +5,6 @@ object Constants {
     const val ThemeMode = "ThemeMode"
 
     const val HomeItemList = "SaveHomeItemList"
+    const val UserItem = "UserItem"
+
 }

@@ -1,10 +1,12 @@
 package com.example.aceledacomposeui.ui.ui
 
 import android.Manifest
+import android.app.Activity
 import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.net.Uri
+import android.text.TextUtils
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.result.launch
@@ -78,7 +80,9 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.rememberAsyncImagePainter
 import com.example.aceledacomposeui.R
+import com.example.aceledacomposeui.data.PreferenceManager
 import com.example.aceledacomposeui.model.NotificationModel
+import com.example.aceledacomposeui.model.User
 import com.example.aceledacomposeui.ui.theme.AceledaComposeUITheme
 import com.example.aceledacomposeui.ui.theme.AcledaAppLogo
 import com.example.aceledacomposeui.ui.theme.Black
@@ -87,10 +91,13 @@ import com.example.aceledacomposeui.ui.theme.Primary
 import com.example.aceledacomposeui.ui.theme.White
 import com.example.aceledacomposeui.ui.theme.Yellow
 import com.example.aceledacomposeui.ui.widget.ToolAppBar
+import com.example.aceledacomposeui.utils.Constants
+import com.example.aceledacomposeui.utils.Utils
 
 @Composable
 fun ProfileKt(
-    navController : NavController
+    navController : NavController,
+    mActivity : Activity ?= null
 ) {
     Column (
         modifier = Modifier
@@ -198,6 +205,10 @@ fun ProfileKt(
                                         }
                                     },
                             )
+
+                            navController.currentBackStackEntry
+                                ?.savedStateHandle
+                                ?.set("bitmap", bitmap)
                         }
                     }
                 }

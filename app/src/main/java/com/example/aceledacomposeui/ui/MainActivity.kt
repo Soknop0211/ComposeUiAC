@@ -3,7 +3,9 @@ package com.example.aceledacomposeui.ui
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.AnimatedContentTransitionScope
@@ -66,8 +68,8 @@ fun NavDatabaseGraph(mActivity: Activity) {
         startDestination = AppScreen.HomeScreen.route,
     ) {
 
-        composable(route = AppScreen.HomeScreen.route) {
-            HomeNewScreen(navController, mActivity)
+        composable(route = AppScreen.HomeScreen.route) { navBackResult ->
+            HomeNewScreen(navController, mActivity, navBackResult)
         }
 
         composable(route = AppScreen.SeeMoreScreen.route) {
@@ -75,7 +77,7 @@ fun NavDatabaseGraph(mActivity: Activity) {
         }
 
         composable(route = AppScreen.ProfileScreen.route) {
-            ProfileKt(navController)
+            ProfileKt(navController, mActivity)
         }
 
         composable(route = AppScreen.HomeNewScreen.route) {

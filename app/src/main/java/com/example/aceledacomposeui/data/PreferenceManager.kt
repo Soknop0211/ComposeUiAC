@@ -15,7 +15,7 @@ object PreferenceManager {
     fun getString(key: String?, activity: Context): String? {
         val aSharedPreferences =
             activity.getSharedPreferences(Constants.KEY_PREFERENCE, Context.MODE_PRIVATE)
-        return aSharedPreferences.getString(key, "")
+        return aSharedPreferences.getString(key, null)
     }
 
     fun saveBoolean(key: String?, value: Boolean, activity: Context) {

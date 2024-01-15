@@ -1,6 +1,8 @@
 package com.example.aceledacomposeui.ui.ui
 
 import android.annotation.SuppressLint
+import android.app.Activity
+import android.graphics.Bitmap
 import android.util.Log
 import androidx.camera.core.ExperimentalGetImage
 import androidx.compose.foundation.BorderStroke
@@ -66,6 +68,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
@@ -84,10 +87,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.util.lerp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
 import com.example.aceledacomposeui.R
+import com.example.aceledacomposeui.data.PreferenceManager
 import com.example.aceledacomposeui.model.HomeExtraModel
 import com.example.aceledacomposeui.model.HomeItemModel
+import com.example.aceledacomposeui.model.User
 import com.example.aceledacomposeui.ui.screen.AppScreen
 import com.example.aceledacomposeui.ui.theme.AceledaBankLogo
 import com.example.aceledacomposeui.ui.theme.AceledaComposeUITheme
@@ -101,7 +107,10 @@ import com.example.aceledacomposeui.ui.theme.SecondYellow
 import com.example.aceledacomposeui.ui.theme.TransparentLight
 import com.example.aceledacomposeui.ui.theme.White
 import com.example.aceledacomposeui.ui.theme.Yellow
+import com.example.aceledacomposeui.utils.Constants
+import com.example.aceledacomposeui.utils.Constants.UserItem
 import com.example.aceledacomposeui.utils.Screen
+import com.example.aceledacomposeui.utils.Utils
 import com.example.aceledacomposeui.utils.Utils.getListExtraHomeMenu
 import com.example.aceledacomposeui.utils.Utils.getListHomeMenu
 import com.example.aceledacomposeui.utils.fontFamily
@@ -110,6 +119,7 @@ import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPagerIndicator
 import com.google.accompanist.pager.calculateCurrentOffsetForPage
 import com.google.accompanist.pager.rememberPagerState
+import com.google.gson.Gson
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.yield
@@ -134,7 +144,7 @@ fun HomeScreenKt(
                 modifier = Modifier
                     .wrapContentSize()
             ) {
-                DrawerContent(avController, mProfileClick = {
+                /*DrawerContent(avController, mProfileClick = {
                     scope.launch {
                         drawerState.apply {
                             if (isClosed) open() else close()
@@ -146,7 +156,7 @@ fun HomeScreenKt(
                             if (isClosed) open() else close()
                         }
                     }
-                }
+                }*/
             }
         },
     ) {
@@ -249,10 +259,15 @@ fun HomeScreenKt(
 fun DrawerHeader(
     avController: NavController,
     mProfileClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    mNavBackStackEntry : NavBackStackEntry,
+    mActivity : Activity
 ) {
     val wd = LocalConfiguration.current.screenWidthDp
     val midWd = ((wd / 2) + (wd / 4)).dp
+    var bitmap by remember {
+        mutableStateOf<Bitmap?>(null)
+    }
 
     Box(
         modifier = Modifier
@@ -268,14 +283,31 @@ fun DrawerHeader(
                 .width(midWd)
         ) {
 
-            Image(
-                painterResource(id = R.drawable.ic_my_profile),
-                contentDescription = null,
-                contentScale = ContentScale.Crop,
-                modifier = modifier
-                    .size(50.dp)
-                    .clip(CircleShape)
-            )
+            // Get Result Call Back From Navigation
+            mNavBackStackEntry.savedStateHandle.get<Bitmap>("bitmap")?.let {
+                bitmap = it
+            }
+
+            // Save Data
+            if (bitmap == null) {
+                Image(
+                    painter = painterResource(id = R.drawable.ic_my_profile),
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop,
+                    modifier = modifier
+                        .size(50.dp)
+                        .clip(CircleShape)
+                )
+            } else {
+                Image(
+                    bitmap = bitmap!!.asImageBitmap(),
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop,
+                    modifier = modifier
+                        .size(50.dp)
+                        .clip(CircleShape)
+                )
+            }
 
             Column(
                 modifier = modifier
@@ -304,13 +336,16 @@ fun DrawerHeader(
 }
 
 @Composable
-fun DrawerContent(avController: NavController, mProfileClick: () -> Unit, mOnClick: () -> Unit) {
+fun DrawerContent(avController: NavController,
+                  mNavBackStackEntry : NavBackStackEntry,
+                  mActivity : Activity,
+                  mProfileClick: () -> Unit, mOnClick: () -> Unit) {
     Column(
         modifier = Modifier
             .background(Primary),
         verticalArrangement = Arrangement.SpaceBetween
     ) {
-        DrawerHeader(avController, mProfileClick)
+        DrawerHeader(avController, mProfileClick, mNavBackStackEntry = mNavBackStackEntry, mActivity = mActivity)
 
         LazyColumn(
             modifier = Modifier
@@ -356,6 +391,7 @@ fun DrawerContent(avController: NavController, mProfileClick: () -> Unit, mOnCli
             Text(
                 text = "Version 1.0",
                 color = White,
+                fontFamily = FontFamily(Font(R.font.montserrat_medium_body)),
                 modifier = Modifier
                     .wrapContentSize()
             )

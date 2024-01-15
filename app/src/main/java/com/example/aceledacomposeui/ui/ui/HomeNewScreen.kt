@@ -95,6 +95,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.util.lerp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.aceledacomposeui.R
@@ -145,6 +146,7 @@ import kotlin.math.roundToInt
 @Composable
 fun HomeNewScreen(avController: NavController = rememberNavController(),
                   mActivity: Activity,
+                  mNavBackStackEntry : NavBackStackEntry,
                   mViewModel : HomeViewModel = hiltViewModel()) {
 
     val verticalGradientBrush = Brush.verticalGradient(
@@ -166,7 +168,7 @@ fun HomeNewScreen(avController: NavController = rememberNavController(),
                 modifier = Modifier
                     .wrapContentSize()
             ) {
-                DrawerContent(avController, mProfileClick = {
+                DrawerContent(avController, mNavBackStackEntry, mActivity = mActivity, mProfileClick = {
                     scope.launch {
                         drawerState.apply {
                             if (isClosed) open() else close()

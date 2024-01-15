@@ -13,6 +13,7 @@ import com.example.aceledacomposeui.model.HomeExtraModel
 import com.example.aceledacomposeui.model.HomeItemModel
 import com.example.aceledacomposeui.model.HomeMainList
 import com.example.aceledacomposeui.model.MobilePhonesData
+import com.example.aceledacomposeui.model.User
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
@@ -323,4 +324,10 @@ object Utils {
         val dataType = object : TypeToken<ArrayList<HomeMainList>>() {}.type
         return Gson().fromJson(data, dataType)
     }
+
+    fun jsonToDataUserClass(data: String): User {
+        val dataType = object : TypeToken<User>() {}.type
+        return Gson().fromJson(data, dataType)
+    }
+
 }
