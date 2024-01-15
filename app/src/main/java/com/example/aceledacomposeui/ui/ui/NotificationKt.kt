@@ -30,6 +30,8 @@ import androidx.compose.ui.AbsoluteAlignment
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -37,6 +39,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.example.aceledacomposeui.R
 import com.example.aceledacomposeui.model.NotificationModel
 import com.example.aceledacomposeui.ui.theme.AceledaComposeUITheme
 import com.example.aceledacomposeui.ui.theme.AcledaAppLogo
@@ -156,12 +159,14 @@ fun NotificationList() {
                                     text = item.name ?: "",
                                     maxLines = 1,
                                     color = Primary,
+                                    fontFamily = FontFamily(Font(R.font.montserrat_medium_body)),
                                     fontSize = 16.sp
                                 )
 
                                 Text(
                                     text = item.date ?: "",
                                     maxLines = 1,
+                                    fontFamily = FontFamily(Font(R.font.montserrat_medium_body)),
                                     color = Primary,
                                     fontSize = 11.sp
                                 )
@@ -174,7 +179,8 @@ fun NotificationList() {
                             maxLines = mShowLess,
                             overflow = TextOverflow.Ellipsis,
                             color = Primary,
-                            fontSize = 14.sp
+                            fontFamily = FontFamily(Font(R.font.montserrat_medium_body)),
+                            fontSize = 14.sp,
                         )
 
                         Box(modifier = Modifier
@@ -186,6 +192,7 @@ fun NotificationList() {
                                 text = if (mShowLess > 2) "Less" else "More",
                                 color = Primary,
                                 fontSize = 11.sp,
+                                fontFamily = FontFamily(Font(R.font.montserrat_medium_body)),
                                 textDecoration = TextDecoration.Underline,
                                 modifier = Modifier
                                     .align(Alignment.CenterEnd)
@@ -193,7 +200,7 @@ fun NotificationList() {
                                         mShowLess = if (mShowLess > 2) {
                                             2
                                         } else {
-                                            10
+                                            Int.MAX_VALUE
                                         }
                                     }
                             )

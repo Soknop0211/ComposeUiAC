@@ -6,8 +6,13 @@ import android.content.Context
 import android.util.Log
 import android.view.View
 import android.view.inputmethod.InputMethodManager
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import com.example.aceledacomposeui.R
 import org.burnoutcrew.reorderable.BuildConfig
 
@@ -34,4 +39,16 @@ fun Activity.hideKeyboard() {
     }
     imm.hideSoftInputFromWindow(view.windowToken, 0)
 }
+
+fun Density.localConfigurationView(mIsWidth : Boolean) : Dp {
+    Modifier.onGloballyPositioned { coordinates ->
+        if (mIsWidth) {
+            return@onGloballyPositioned with(this) { (coordinates.size.width.toDp()) }
+        } else {
+            return@onGloballyPositioned with(this) { (coordinates.size.height.toDp()) }
+        }
+    }
+    return 0.dp
+}
+
 

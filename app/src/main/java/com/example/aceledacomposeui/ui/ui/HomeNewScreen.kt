@@ -2,7 +2,11 @@ package com.example.aceledacomposeui.ui.ui
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.content.Context
+import android.util.Log
 import androidx.camera.core.ExperimentalGetImage
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandIn
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -22,24 +26,27 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.itemsIndexed
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -47,16 +54,17 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalConfiguration
@@ -72,13 +80,16 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.util.lerp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.aceledacomposeui.R
 import com.example.aceledacomposeui.model.HomeExtraModel
+import com.example.aceledacomposeui.model.HomeMainList
 import com.example.aceledacomposeui.ui.screen.AppScreen
 import com.example.aceledacomposeui.ui.screen_activity.MobileTopUpActivity
 import com.example.aceledacomposeui.ui.theme.AceledaBankLogo
@@ -95,26 +106,36 @@ import com.example.aceledacomposeui.ui.theme.Red
 import com.example.aceledacomposeui.ui.theme.SecondPrimary
 import com.example.aceledacomposeui.ui.theme.SecondYellow
 import com.example.aceledacomposeui.ui.theme.ThirdPrimary
+import com.example.aceledacomposeui.ui.theme.TransparentDark
 import com.example.aceledacomposeui.ui.theme.TransparentLight
 import com.example.aceledacomposeui.ui.theme.White
 import com.example.aceledacomposeui.ui.theme.Yellow
+import com.example.aceledacomposeui.utils.Utils
 import com.example.aceledacomposeui.utils.Utils.getListExtraHomeMenu
 import com.example.aceledacomposeui.utils.Utils.getListHomeMenu
 import com.example.aceledacomposeui.utils.Utils.getListRecentTransfer
 import com.example.aceledacomposeui.utils.logDebug
+import com.example.aceledacomposeui.view_model.HomeViewModel
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPagerIndicator
 import com.google.accompanist.pager.calculateCurrentOffsetForPage
 import com.google.accompanist.pager.rememberPagerState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.yield
+import org.burnoutcrew.reorderable.detectReorderAfterLongPress
+import org.burnoutcrew.reorderable.draggedItem
+import org.burnoutcrew.reorderable.move
+import org.burnoutcrew.reorderable.rememberReorderState
+import org.burnoutcrew.reorderable.reorderable
 import kotlin.math.absoluteValue
 import kotlin.math.roundToInt
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeNewScreen(avController: NavController = rememberNavController(), mActivity: Activity) {
+fun HomeNewScreen(avController: NavController = rememberNavController(),
+                  mActivity: Activity,
+                  mViewModel : HomeViewModel = hiltViewModel()) {
 
     val verticalGradientBrush = Brush.verticalGradient(
         colors = listOf(
@@ -125,12 +146,11 @@ fun HomeNewScreen(avController: NavController = rememberNavController(), mActivi
 
     Column(
         modifier = Modifier
-            .fillMaxSize()
-            .background(color = Primary),
+            .fillMaxSize(),
     ) {
         TopAppBar(
             modifier = Modifier.background(verticalGradientBrush),
-            colors = TopAppBarDefaults.smallTopAppBarColors(
+            colors = TopAppBarDefaults.topAppBarColors(
                 containerColor = Color.Transparent
             ),
             title = {
@@ -154,23 +174,12 @@ fun HomeNewScreen(avController: NavController = rememberNavController(), mActivi
                 }
             },
             actions = {
-                val isExpanded by remember { mutableStateOf(false) }
-                val iconFavorite: ImageVector =
-                    if (isExpanded) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder
-
                 CustomIconTop(
                     onClick = {
                         avController.navigate(AppScreen.NotificationScreen.route)
                     },
                     Icons.Filled.Notifications
                 )
-
-                /*CustomIconTop(
-                    onClick = {
-                        isExpanded = !isExpanded
-                    },
-                    icon = iconFavorite
-                )*/
 
                 Box(modifier = Modifier.padding(end = 10.dp)) {
                     Image(
@@ -187,9 +196,101 @@ fun HomeNewScreen(avController: NavController = rememberNavController(), mActivi
             }
         )
 
-        BodyContent(mActivity)
+        HomeBody(mActivity,
+            mViewModel.mHomeList.observeAsState().value ?: Utils.mainCategory(),
+                  mViewModel
+            )
     }
 
+}
+
+@Composable
+fun HomeBody(mActivity: Context,
+             mList : List<HomeMainList> = ArrayList(),
+             mViewModel : HomeViewModel) {
+    val horizontalDp = 12.dp
+    val localDensity = LocalDensity.current
+
+    val state = rememberReorderState()
+
+    // First List
+    val data = mList.toMutableStateList()
+
+    LazyColumn(
+        state = state.listState,
+        modifier = Modifier
+            .reorderable(state, { from, to ->
+                data.move(from.index, to.index)
+
+                // Update Local
+                mViewModel.saveHomeScreenList(Utils.encodeToString(data))
+
+                data.forEach {
+                    it.id.logDebug("jeeeeeeeeeeeeeeeeeeeeeeeee")
+                }
+            })
+    ) {
+        items(data, { it }) { item ->
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .draggedItem(state.offsetByKey(item))
+                    .detectReorderAfterLongPress(state),
+            ) {
+                Column (
+                    modifier = Modifier
+                        .background(LightGray)
+                ){
+                    when (item.id) {
+                        "top_main" -> {
+                            Column(
+                                modifier = Modifier
+                                    .background(Primary)
+                            ) {
+                                CategoriesMenu(localDensity, mActivity)
+
+                                Categories2Item(horizontalDp)
+                            }
+                        }
+                        "recent_transaction" -> {
+                            RecentTransaction(horizontalDp)
+                        }
+                        else -> {
+                            Column (
+                                modifier = Modifier
+                                    .background(color = LightGray)
+                            ){
+                                when (item.id) {
+                                    "slider_recommended" -> {
+                                        SliderRecommended()
+                                    }
+                                    "special_service" -> {
+                                        SpecialServiceList()
+                                    }
+                                    "special_offer" -> {
+                                        SpecialOfferList(horizontalDp, localDensity)
+                                    }
+                                    "call_center" -> {
+                                        CallCenterList(horizontalDp, localDensity)
+                                    }
+                                    "advertise" -> {
+                                        SliderRecommended(mIsAdvertise = true)
+
+                                        Spacer(modifier = Modifier.padding(10.dp))
+                                    }
+                                    else ->{
+                                        Spacer(modifier = Modifier.padding(0.dp))
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                }
+
+            }
+        }
+    }
 }
 
 @androidx.annotation.OptIn(ExperimentalGetImage::class)
@@ -199,7 +300,26 @@ fun BodyContent(mActivity: Activity) {
     val horizontalDp = 12.dp
     val localDensity = LocalDensity.current
 
-    Box(modifier = Modifier.fillMaxSize()) {
+    Log.i("ScrollValue", "current: ${rememberScrollState.value}, max: ${rememberScrollState.maxValue}")
+
+    val reachedEnd = (rememberScrollState.value + rememberScrollState.maxValue) >= rememberScrollState.maxValue
+   /* if (rememberScrollState.value == rememberScrollState.maxValue) {
+        Log.i("ScrollValue", "End Test")
+        isVisibleButton = true
+    } else {
+        isVisibleButton = false
+    }*/
+
+    /*var isButtonEnabled by remember { mutableStateOf(false) }
+    LaunchedEffect(rememberScrollState.canScrollForward) {
+        if (!rememberScrollState.canScrollForward) {
+            isButtonEnabled = true
+        } else {
+            isButtonEnabled = false
+        }
+    }*/
+
+    /*Box(modifier = Modifier.fillMaxSize()) {
         Column(
             modifier = Modifier
                 .verticalScroll(rememberScrollState),
@@ -224,17 +344,52 @@ fun BodyContent(mActivity: Activity) {
 
                 SliderRecommended(mIsAdvertise = true)
 
-                Spacer(modifier = Modifier.padding(10.dp))
+                *//* CustomServiceFavorite(horizontalDp) *//*
 
-                /* CustomServiceFavorite(horizontalDp) */
+                FloatingAction(!rememberScrollState.canScrollForward)
+
+                Spacer(modifier = Modifier.padding(10.dp))
             }
 
         }
+    }*/
+
+    val mAllList = List(3) { "item $it" }.toMutableStateList()
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState),
+    ) {
+        CategoriesMenu(localDensity, mActivity)
+
+        Categories2Item(horizontalDp)
+
+        RecentTransaction(horizontalDp)
+
+        Column (
+            modifier = Modifier
+                .background(color = LightGray)
+        ){
+            SliderRecommended()
+
+            SpecialServiceList()
+
+            SpecialOfferList(horizontalDp, localDensity)
+
+            CallCenterList(horizontalDp, localDensity)
+
+            SliderRecommended(mIsAdvertise = true)
+
+            FloatingAction(reachedEnd)
+
+             CustomServiceFavorite(horizontalDp)
+        }
+
     }
 }
 
 @Composable
-private fun CategoriesMenu(mDensity: Density = LocalDensity.current, mActivity: Activity) {
+private fun CategoriesMenu(mDensity: Density = LocalDensity.current, mActivity: Context ?= null) {
     var columnHeightDp by remember {
         mutableStateOf(350.dp)
     }
@@ -243,7 +398,7 @@ private fun CategoriesMenu(mDensity: Density = LocalDensity.current, mActivity: 
         mutableStateOf(50.dp)
     }
 
-    val mList = getListHomeMenu()
+    val mList = getListHomeMenu().toMutableStateList()
 
     // Color
     val mStartList = listOf(
@@ -288,7 +443,6 @@ private fun CategoriesMenu(mDensity: Density = LocalDensity.current, mActivity: 
         colors = mEndList
     )
 
-
     LazyVerticalGrid(
         modifier = Modifier
             .fillMaxWidth()
@@ -297,22 +451,23 @@ private fun CategoriesMenu(mDensity: Density = LocalDensity.current, mActivity: 
         userScrollEnabled = false,
 
         content = {
-            items(mList.size) { index ->
+            itemsIndexed(items = mList) { index, _ ->
                 Card(
                     modifier = Modifier
                         .onGloballyPositioned { coordinates ->
                             // Set column height using the LayoutCoordinates
                             lineHeightDp =
-                                with(mDensity) { (coordinates.size.height.toDp())}
+                                with(mDensity) { (coordinates.size.height.toDp()) }
 
                             columnHeightDp =
                                 with(mDensity) { lineHeightDp * 3 }
                         }
                         .clickable {
                             if (mList[index].id == "top_up") {
-                                MobileTopUpActivity.start(mActivity)
+                                MobileTopUpActivity.start(mActivity!!)
                             }
-                        },
+                        }
+                    ,
                     colors = CardDefaults.cardColors(
                         containerColor = ThirdPrimary,
                     ),
@@ -341,16 +496,16 @@ private fun CategoriesMenu(mDensity: Density = LocalDensity.current, mActivity: 
                                     contentDescription = "android image",
                                     tint = White,
                                     modifier = Modifier
-                                        .size(35.dp)
+                                        .size(50.dp)
                                         .padding(top = 5.dp)
                                 )
                                 Text(
                                     text = mList[index].name,
                                     color = White,
                                     maxLines = 1,
-                                    style = TextStyle(fontSize = 12.sp),
+                                    style = TextStyle(fontSize = 13.sp),
                                     modifier = Modifier
-                                        .padding(vertical = 5.dp)
+                                        .padding(top = 10.dp, bottom = 5.dp)
                                 )
                             }
 
@@ -457,6 +612,7 @@ private fun CardCategoriesItem2(index : Int) {
                     ){
                         Text(
                             text = "Total Balance",
+                            fontFamily = FontFamily(Font(R.font.montserrat_medium_body)),
                             style = TextStyle(color = White),
                             textAlign = TextAlign.Start,
                             maxLines = 2
@@ -466,7 +622,7 @@ private fun CardCategoriesItem2(index : Int) {
                             modifier = Modifier
                                 .weight(weight = 1f, fill = false)
                                 .padding(horizontal = 5.dp)
-                                .background(Primary, shape = CircleShape)
+                                .background(SecondYellow, shape = CircleShape)
                         ){
                             Icon(
                                 painter = painterResource(id = R.drawable.ic_currency_exchange),
@@ -474,7 +630,7 @@ private fun CardCategoriesItem2(index : Int) {
                                 tint = White,
                                 modifier = Modifier
                                     .size(20.dp)
-                                    .padding(start = 5.dp)
+                                    .padding(5.dp)
                             )
                         }
                     }
@@ -497,14 +653,15 @@ private fun CardCategoriesItem2(index : Int) {
                             )
 
                             Text(
-                                text = "Dolla",
+                                text = "USD",
                                 style = TextStyle(color = White),
                                 textAlign = TextAlign.Start,
+                                fontFamily = FontFamily(Font(R.font.montserrat_medium_body)),
                                 maxLines = 2
                             )
                         }
                         Text(
-                            text = "100$",
+                            text = "100.00",
                             style = TextStyle(color = White),
                             textAlign = TextAlign.Start,
                             maxLines = 2,
@@ -531,17 +688,19 @@ private fun CardCategoriesItem2(index : Int) {
                             )
 
                             Text(
-                                text = "Real",
+                                text = "KHR",
                                 style = TextStyle(color = White),
                                 textAlign = TextAlign.Start,
+                                fontFamily = FontFamily(Font(R.font.montserrat_medium_body)),
                                 maxLines = 2
                             )
                         }
                         Text(
-                            text = "400,088R",
+                            text = "400,088",
                             style = TextStyle(color = White),
                             textAlign = TextAlign.Start,
                             maxLines = 2,
+                            fontFamily = FontFamily(Font(R.font.montserrat_medium_body)),
                             modifier = Modifier
                                 .weight(weight = 1f, fill = false)
                         )
@@ -550,7 +709,8 @@ private fun CardCategoriesItem2(index : Int) {
                     // Line
                     val colorGradient = Brush.horizontalGradient(
                         colors = listOf(
-                            Yellow,
+                            SecondYellow,
+                            SecondYellow,
                             BlueLightTxt,
                         )
                     )
@@ -573,7 +733,7 @@ private fun CardCategoriesItem2(index : Int) {
                         modifier = Modifier
                             .size(30.dp)
                             .align(Alignment.CenterVertically),
-                        painter = painterResource(id = R.drawable.ic_transfer_money),
+                        painter = painterResource(id = R.drawable.ic_exchange_currency),
                         contentDescription = "Localized description",
                     )
                     Column (
@@ -585,6 +745,7 @@ private fun CardCategoriesItem2(index : Int) {
                             style = TextStyle(color = White),
                             textAlign = TextAlign.Start,
                             maxLines = 1,
+                            fontFamily = FontFamily(Font(R.font.montserrat_medium_body)),
                             overflow = TextOverflow.Ellipsis
                         )
 
@@ -592,6 +753,7 @@ private fun CardCategoriesItem2(index : Int) {
                             text = "1$ = 4088R",
                             style = TextStyle(color = LightGray),
                             textAlign = TextAlign.Start,
+                            fontFamily = FontFamily(Font(R.font.montserrat_medium_body)),
                             fontSize = 13.sp,
                             maxLines = 1
                         )
@@ -609,7 +771,7 @@ private fun RecentTransaction(horizontalDp : Dp = 10.dp) {
         modifier = Modifier
             .wrapContentSize()
             .clip(shape = RoundedCornerShape(0.dp))
-            .background(color = TransparentLight)
+            .background(color = Primary)
     ){
         Box(
             modifier = Modifier
@@ -801,7 +963,7 @@ private fun InitSlider(mIsAdvertise : Boolean = false) {
                 Image(
                     painter = imageSlider[page],
                     contentDescription = "Slider",
-                    contentScale = ContentScale.Crop,
+                    contentScale = ContentScale.FillBounds,
                     modifier = Modifier
                         .fillMaxSize()
                 )
@@ -915,6 +1077,7 @@ fun CardSpecialItem(index: Int = 0, end: Dp = 0.dp) {
                         modifier = Modifier
                             .padding(horizontal = 5.dp),
                         text = "Special Recommended Promotion",
+                        fontFamily = FontFamily(Font(R.font.montserrat_medium_body)),
                         maxLines = 1,
                         color = Black,
                         fontSize = 16.sp
@@ -929,6 +1092,7 @@ fun CardSpecialItem(index: Int = 0, end: Dp = 0.dp) {
                     androidx.compose.material.Text(
                         text = "ACLEDA Bank Plc is a public limited company, formed under the Banking and Financial Institutions Law of the Kingdom of Cambodia. Originally, it was founded in January 1993, as a national NGO for micro and small enterprises' development and credit.",
                         maxLines = 3,
+                        fontFamily = FontFamily(Font(R.font.montserrat_medium_body)),
                         minLines = 3,
                         overflow = TextOverflow.Ellipsis,
                         color = Black,
@@ -1298,7 +1462,7 @@ private fun CallCenterList(horizontalDp : Dp = 10.dp, mDensity : Density = Local
 
                 ) {
                     Image(
-                        contentScale = ContentScale.Crop,
+                        contentScale = ContentScale.FillBounds,
                         painter = painterResource(id = mLogo),
                         contentDescription = "android image",
                         modifier = Modifier
@@ -1311,11 +1475,74 @@ private fun CallCenterList(horizontalDp : Dp = 10.dp, mDensity : Density = Local
     }
 }
 
+@Composable
+fun FloatingAction(isVisibleButton : Boolean) {
+    AnimatedVisibility(
+        visible = isVisibleButton,
+        enter = expandIn { IntSize(width = 1, height = 1) }
+    ) {
+        if (isVisibleButton){
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(start = 20.dp, end = 20.dp, top = 10.dp, bottom = 15.dp)
+            ){
+                FloatingActionButton(
+                    onClick = {
+
+                    },
+                    containerColor = BlueLightTxt,
+                    shape = CircleShape,
+                    elevation = FloatingActionButtonDefaults.elevation(2.dp),
+                    modifier = Modifier
+                        .padding(5.dp)
+                        .align(Alignment.Center)
+
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_account_card),
+                        contentDescription = "Reddit icon",
+                        tint = White,
+                    )
+                }
+            }
+        }
+    }
+    /*AnimatedVisibility(
+        visible = isVisibleButton,
+        enter = expandIn { IntSize(width = 1, height = 1) }
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(start = 20.dp, end = 20.dp, top = 10.dp, bottom = 15.dp)
+        ){
+            FloatingActionButton(
+                onClick = {
+
+                },
+                contentColor = BlueLightTxt,
+                shape = CircleShape,
+                elevation = FloatingActionButtonDefaults.elevation(2.dp),
+                modifier = Modifier
+                    .padding(5.dp)
+                    .align(Alignment.Center)
+
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_qrcode_home),
+                    contentDescription = "Reddit icon",
+                )
+            }
+        }
+    }*/
+}
+
 
 @Preview(showBackground = true)
 @Composable
 fun HomeNewPreview() {
     AceledaComposeUITheme {
-        CallCenterList()
+        // HomeBody(LocalContext.current)
     }
 }

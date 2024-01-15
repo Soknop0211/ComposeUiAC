@@ -1,6 +1,5 @@
 package com.example.aceledacomposeui.utils
 
-import android.app.Activity
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -8,14 +7,15 @@ import android.graphics.Matrix
 import android.media.ExifInterface
 import android.net.Uri
 import android.provider.MediaStore
-import android.view.View
-import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import com.example.aceledacomposeui.R
 import com.example.aceledacomposeui.model.HomeExtraModel
 import com.example.aceledacomposeui.model.HomeItemModel
+import com.example.aceledacomposeui.model.HomeMainList
 import com.example.aceledacomposeui.model.MobilePhonesData
 import com.google.gson.Gson
+import com.google.gson.GsonBuilder
+import com.google.gson.reflect.TypeToken
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.IOException
@@ -297,5 +297,30 @@ object Utils {
             return null
         }
         return jsonString
+    }
+
+    fun mainCategory() : ArrayList<HomeMainList>{
+        return arrayListOf(
+            HomeMainList("top_main", "Top Main"),
+            HomeMainList("recent_transaction", "Recent Transaction"),
+            HomeMainList("slider_recommended", "Slider Recommended"),
+            HomeMainList("special_service", "Special Service"),
+            HomeMainList("special_offer", "Special Offer"),
+            HomeMainList("call_center", "Call Center"),
+            HomeMainList("advertise", "Advertise")
+            )
+    }
+
+    inline fun <reified T> encodeFromString(jsonData: String): T {
+        return Gson().fromJson(jsonData, T::class.java)
+    }
+
+    fun <T> encodeToString(data: T): String {
+        return Gson().toJson(data)
+    }
+
+    fun jsonToDataClass(data: String): ArrayList<HomeMainList> {
+        val dataType = object : TypeToken<ArrayList<HomeMainList>>() {}.type
+        return Gson().fromJson(data, dataType)
     }
 }

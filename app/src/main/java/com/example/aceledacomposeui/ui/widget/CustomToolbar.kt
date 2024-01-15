@@ -138,7 +138,7 @@ fun ToolAppBar(
             ){
                 Icon(
                     modifier = Modifier
-                        .size(30.dp),
+                        .size(35.dp),
                     imageVector = Icons.Filled.KeyboardArrowLeft,
                     tint = colorResource(id = R.color.white),
                     contentDescription = "Localized description"
