@@ -11,6 +11,7 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -40,23 +41,30 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Divider
+import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.ModalDrawerSheet
+import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Alignment
@@ -64,7 +72,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalConfiguration
@@ -106,7 +116,6 @@ import com.example.aceledacomposeui.ui.theme.Red
 import com.example.aceledacomposeui.ui.theme.SecondPrimary
 import com.example.aceledacomposeui.ui.theme.SecondYellow
 import com.example.aceledacomposeui.ui.theme.ThirdPrimary
-import com.example.aceledacomposeui.ui.theme.TransparentDark
 import com.example.aceledacomposeui.ui.theme.TransparentLight
 import com.example.aceledacomposeui.ui.theme.White
 import com.example.aceledacomposeui.ui.theme.Yellow
@@ -121,6 +130,7 @@ import com.google.accompanist.pager.HorizontalPagerIndicator
 import com.google.accompanist.pager.calculateCurrentOffsetForPage
 import com.google.accompanist.pager.rememberPagerState
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.yield
 import org.burnoutcrew.reorderable.detectReorderAfterLongPress
 import org.burnoutcrew.reorderable.draggedItem
@@ -144,62 +154,109 @@ fun HomeNewScreen(avController: NavController = rememberNavController(),
         )
     )
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize(),
-    ) {
-        TopAppBar(
-            modifier = Modifier.background(verticalGradientBrush),
-            colors = TopAppBarDefaults.topAppBarColors(
-                containerColor = Color.Transparent
-            ),
-            title = {
-                Text(
-                    "",
-                    color = colorResource(id = R.color.white),
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
-            },
-            navigationIcon = {
-                Row {
-                    Image(
-                        painter = painterResource(id = AceledaBankLogo),
-                        modifier = Modifier
-                            .width(100.dp)
-                            .wrapContentHeight()
-                            .align(Alignment.CenterVertically),
-                        contentDescription = "Localized description"
-                    )
-                }
-            },
-            actions = {
-                CustomIconTop(
-                    onClick = {
-                        avController.navigate(AppScreen.NotificationScreen.route)
-                    },
-                    Icons.Filled.Notifications
-                )
+    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+    val scope = rememberCoroutineScope()
 
-                Box(modifier = Modifier.padding(end = 10.dp)) {
-                    Image(
-                        painter = painterResource(id = KhQrLogo),
-                        contentDescription = "Localized description",
-                        modifier = Modifier
-                            .clip(shape = RoundedCornerShape(5.dp))
-                            .background(Red)
-                            .padding(3.dp)
-                            .size(18.dp)
-                            .clickable { }
-                    )
+    ModalNavigationDrawer(
+        drawerState = drawerState,
+        drawerContent = {
+            ModalDrawerSheet(
+                drawerShape = RectangleShape,
+                drawerContainerColor = Primary,
+                modifier = Modifier
+                    .wrapContentSize()
+            ) {
+                DrawerContent(avController, mProfileClick = {
+                    scope.launch {
+                        drawerState.apply {
+                            if (isClosed) open() else close()
+                        }
+                    }
+                }) {
+                    scope.launch {
+                        drawerState.apply {
+                            if (isClosed) open() else close()
+                        }
+                    }
                 }
             }
-        )
+        },
+    ) {
 
-        HomeBody(mActivity,
-            mViewModel.mHomeList.observeAsState().value ?: Utils.mainCategory(),
-                  mViewModel
+        Column(
+            modifier = Modifier
+                .fillMaxSize(),
+        ) {
+            TopAppBar(
+                modifier = Modifier.background(verticalGradientBrush),
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = Color.Transparent
+                ),
+                title = {
+                    Text(
+                        "",
+                        color = colorResource(id = R.color.white),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                },
+                navigationIcon = {
+                    Row {
+                        IconButton(
+                            onClick = {
+                                scope.launch {
+                                    drawerState.apply {
+                                        if (isClosed) open() else close()
+                                    }
+                                }
+                            },
+                            modifier = Modifier.align(Alignment.CenterVertically)
+                        ) {
+                            Icon(
+                                Icons.Default.Menu,
+                                tint = White,
+                                contentDescription = "Menu"
+                            )
+                        }
+
+                        Image(
+                            painter = painterResource(id = AceledaBankLogo),
+                            modifier = Modifier
+                                .width(100.dp)
+                                .wrapContentHeight()
+                                .align(Alignment.CenterVertically),
+                            contentDescription = "Localized description"
+                        )
+                    }
+                },
+                actions = {
+                    CustomIconTop(
+                        onClick = {
+                            avController.navigate(AppScreen.NotificationScreen.route)
+                        },
+                        Icons.Filled.Notifications
+                    )
+
+                    Box(modifier = Modifier.padding(end = 10.dp)) {
+                        Image(
+                            painter = painterResource(id = KhQrLogo),
+                            contentDescription = "Localized description",
+                            modifier = Modifier
+                                .clip(shape = RoundedCornerShape(5.dp))
+                                .background(Red)
+                                .padding(3.dp)
+                                .size(18.dp)
+                                .clickable { }
+                        )
+                    }
+                }
             )
+
+            HomeBody(mActivity,
+                mViewModel.mHomeList.observeAsState().value ?: Utils.mainCategory(),
+                mViewModel
+            )
+        }
     }
 
 }
@@ -354,7 +411,6 @@ fun BodyContent(mActivity: Activity) {
         }
     }*/
 
-    val mAllList = List(3) { "item $it" }.toMutableStateList()
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -565,7 +621,7 @@ private fun Categories2Item(horizontalDp : Dp = 10.dp) {
                 .wrapContentSize()
         ) {
             item {
-                listCate.forEachIndexed { index, it ->
+                listCate.forEachIndexed { index, _ ->
                     CardCategoriesItem2(index)
                 }
             }
@@ -577,6 +633,9 @@ private fun Categories2Item(horizontalDp : Dp = 10.dp) {
 private fun CardCategoriesItem2(index : Int) {
     val wd = LocalConfiguration.current.screenWidthDp
     val midWd = ((wd / 2).dp - 8.dp)
+
+    var isExpanded by remember { mutableStateOf(false) }
+    val iconOnOff : Painter = painterResource(id = if (isExpanded) R.drawable.baseline_open_eyes else R.drawable.ic_close_eyes)
 
     Card(
         modifier = Modifier
@@ -621,16 +680,21 @@ private fun CardCategoriesItem2(index : Int) {
                         Box(
                             modifier = Modifier
                                 .weight(weight = 1f, fill = false)
-                                .padding(horizontal = 5.dp)
-                                .background(SecondYellow, shape = CircleShape)
+                                .padding(start = 5.dp)
                         ){
                             Icon(
-                                painter = painterResource(id = R.drawable.ic_currency_exchange),
+                                painter = iconOnOff,
                                 contentDescription = "android image",
                                 tint = White,
                                 modifier = Modifier
-                                    .size(20.dp)
-                                    .padding(5.dp)
+                                    .size(25.dp)
+                                    .padding(vertical = 5.dp)
+                                    .clickable (
+                                        interactionSource = remember { MutableInteractionSource() },
+                                        indication = null
+                                    ){
+                                        isExpanded = !isExpanded
+                                    }
                             )
                         }
                     }
@@ -661,7 +725,7 @@ private fun CardCategoriesItem2(index : Int) {
                             )
                         }
                         Text(
-                            text = "100.00",
+                            text = if (isExpanded)  "100.00" else "***",
                             style = TextStyle(color = White),
                             textAlign = TextAlign.Start,
                             maxLines = 2,
@@ -696,7 +760,7 @@ private fun CardCategoriesItem2(index : Int) {
                             )
                         }
                         Text(
-                            text = "400,088",
+                            text = if (isExpanded)  "400,088" else "***",
                             style = TextStyle(color = White),
                             textAlign = TextAlign.Start,
                             maxLines = 2,
@@ -746,7 +810,9 @@ private fun CardCategoriesItem2(index : Int) {
                             textAlign = TextAlign.Start,
                             maxLines = 1,
                             fontFamily = FontFamily(Font(R.font.montserrat_medium_body)),
-                            overflow = TextOverflow.Ellipsis
+                            overflow = TextOverflow.Ellipsis,
+                            modifier = Modifier
+                                .padding(bottom = 2.dp, top = 5.dp)
                         )
 
                         Text(
@@ -755,7 +821,9 @@ private fun CardCategoriesItem2(index : Int) {
                             textAlign = TextAlign.Start,
                             fontFamily = FontFamily(Font(R.font.montserrat_medium_body)),
                             fontSize = 13.sp,
-                            maxLines = 1
+                            maxLines = 1,
+                            modifier = Modifier
+                                .padding(top = 2.dp, bottom = 5.dp)
                         )
                     }
 
@@ -1543,6 +1611,6 @@ fun FloatingAction(isVisibleButton : Boolean) {
 @Composable
 fun HomeNewPreview() {
     AceledaComposeUITheme {
-        // HomeBody(LocalContext.current)
+        Categories2Item()
     }
 }

@@ -285,6 +285,7 @@ fun DrawerHeader(
                 Text(
                     text = "Sok Nop",
                     textAlign = TextAlign.Center,
+                    fontFamily = FontFamily(Font(R.font.montserrat_medium_body)),
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.onPrimary,
                 )
@@ -292,6 +293,7 @@ fun DrawerHeader(
                 Text(
                     text = "012 345 678",
                     textAlign = TextAlign.Center,
+                    fontFamily = FontFamily(Font(R.font.montserrat_medium_body)),
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.onPrimary,
                 )
@@ -337,6 +339,7 @@ fun DrawerContent(avController: NavController, mProfileClick: () -> Unit, mOnCli
                         Text(
                             text = it.title,
                             color = White,
+                            fontFamily = FontFamily(Font(R.font.montserrat_medium_body)),
                             modifier = Modifier
                                 .wrapContentSize()
                         )

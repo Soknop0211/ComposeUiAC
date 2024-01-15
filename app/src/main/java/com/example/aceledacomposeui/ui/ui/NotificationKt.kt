@@ -1,8 +1,11 @@
 package com.example.aceledacomposeui.ui.ui
 
+import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -181,6 +184,9 @@ fun NotificationList() {
                             color = Primary,
                             fontFamily = FontFamily(Font(R.font.montserrat_medium_body)),
                             fontSize = 14.sp,
+                            modifier = Modifier
+                                .animateContentSize(animationSpec = tween(100))
+
                         )
 
                         Box(modifier = Modifier
@@ -196,7 +202,10 @@ fun NotificationList() {
                                 textDecoration = TextDecoration.Underline,
                                 modifier = Modifier
                                     .align(Alignment.CenterEnd)
-                                    .clickable {
+                                    .clickable (
+                                        interactionSource = remember { MutableInteractionSource() },
+                                        indication = null
+                                    ){
                                         mShowLess = if (mShowLess > 2) {
                                             2
                                         } else {
