@@ -103,6 +103,7 @@ import com.example.aceledacomposeui.model.HomeExtraModel
 import com.example.aceledacomposeui.model.HomeMainList
 import com.example.aceledacomposeui.ui.screen.AppScreen
 import com.example.aceledacomposeui.ui.screen_activity.MobileTopUpActivity
+import com.example.aceledacomposeui.ui.screen_activity.ScanQrCodeActivity
 import com.example.aceledacomposeui.ui.theme.AceledaBankLogo
 import com.example.aceledacomposeui.ui.theme.AceledaComposeUITheme
 import com.example.aceledacomposeui.ui.theme.AcledaAppLogo
@@ -523,6 +524,8 @@ private fun CategoriesMenu(mDensity: Density = LocalDensity.current, mActivity: 
                         .clickable {
                             if (mList[index].id == "top_up") {
                                 MobileTopUpActivity.start(mActivity!!)
+                            } else if (mList[index].id == "scan_qr"){
+                                ScanQrCodeActivity.start(mActivity!!)
                             }
                         }
                     ,

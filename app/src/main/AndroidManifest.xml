@@ -7,7 +7,7 @@
         android:required="false" />
 
     <uses-permission android:name="android.permission.CAMERA" />
-    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
 
     <application
         android:name=".MainApplication"
@@ -21,11 +21,16 @@
         android:theme="@style/Theme.AceledaComposeUI"
         tools:targetApi="s">
         <activity
+            android:name=".ui.screen_activity.ScanQrCodeActivity"
+            android:exported="false"
+            android:label="@string/title_activity_scan_qr_code"
+            android:theme="@style/Theme.AceledaComposeUI" />
+        <activity
             android:name=".ui.screen_activity.MobileTopUpActivity"
             android:exported="false"
-            android:windowSoftInputMode="adjustResize"
             android:label="@string/title_activity_mobile_top_up"
-            android:theme="@style/Theme.AceledaComposeUI" />
+            android:theme="@style/Theme.AceledaComposeUI"
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".ui.MoreServiceActivity"
             android:exported="false" />

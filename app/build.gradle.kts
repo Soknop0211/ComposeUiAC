@@ -28,10 +28,7 @@ android {
     buildTypes {
         release {
             isMinifyEnabled = false
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
     }
     compileOptions {
@@ -77,6 +74,7 @@ dependencies {
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
     implementation(platform("androidx.compose:compose-bom:2023.03.00"))
     implementation(platform("androidx.compose:compose-bom:2023.08.00"))
+    implementation(platform("androidx.compose:compose-bom:2023.08.00"))
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
@@ -84,6 +82,7 @@ dependencies {
     androidTestImplementation(platform("androidx.compose:compose-bom:2023.03.00"))
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
     androidTestImplementation(platform("androidx.compose:compose-bom:2023.03.00"))
+    androidTestImplementation(platform("androidx.compose:compose-bom:2023.08.00"))
     androidTestImplementation(platform("androidx.compose:compose-bom:2023.08.00"))
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
@@ -118,11 +117,13 @@ dependencies {
     implementation("androidx.hilt:hilt-navigation-compose:$hiltAndroidXVersion")
 
     // Bar code scanner
-    val camerax_version = "1.3.0-alpha04"
+   /* val camerax_version = "1.3.1"
     implementation("androidx.camera:camera-camera2:${camerax_version}")
     implementation("androidx.camera:camera-lifecycle:${camerax_version}")
     implementation("androidx.camera:camera-view:${camerax_version}")
-    implementation("com.google.mlkit:barcode-scanning:17.0.3")
+    implementation("com.google.mlkit:barcode-scanning:17.2.0")*/
+
+    implementation("androidx.camera:camera-view:1.4.0-alpha03")
 
     implementation("com.google.android.gms:play-services-code-scanner:16.1.0")
 
@@ -141,4 +142,19 @@ dependencies {
     //data store
     implementation("androidx.datastore:datastore-preferences:1.0.0")
 
+    // CameraX
+    implementation("androidx.camera:camera-camera2:1.3.0-alpha06")
+    implementation("androidx.camera:camera-lifecycle:1.3.0-alpha06")
+    implementation("androidx.camera:camera-view:1.3.0-alpha06")
+
+    // MLKit
+    implementation("com.google.mlkit:face-detection:16.1.5")
+    implementation("com.google.mlkit:image-labeling:17.0.7")
+    implementation("com.google.mlkit:object-detection:17.0.0")
+    implementation("com.google.mlkit:barcode-scanning:17.1.0")
+    implementation("com.google.mlkit:text-recognition:16.0.0-beta6")
+    implementation("com.google.mlkit:face-mesh-detection:16.0.0-beta1")
+
+    implementation("androidx.compose.ui:ui:1.5.0-beta01")
+    implementation("androidx.navigation:navigation-compose:2.7.0-beta01")
 }
