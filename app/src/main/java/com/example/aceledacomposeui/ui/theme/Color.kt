@@ -1,5 +1,6 @@
 package com.example.aceledacomposeui.ui.theme
 
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 
 val Pink80 = Color(0xFFEFB8C8)
@@ -22,3 +23,11 @@ val TransparentDark = Color(0xFF09233c)
 
 val BlueTxt = Color(0xFF465dc8)
 val BlueLightTxt = Color(0xFF2387bd)
+
+
+val topBarBrush = Brush.verticalGradient(
+    colors = listOf(
+        SecondPrimary,
+        Primary,
+    )
+)

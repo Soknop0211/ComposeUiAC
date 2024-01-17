@@ -240,7 +240,7 @@ fun NotificationKt(
         var mIsLoading by remember { mutableStateOf(true) }
 
         LaunchedEffect(Unit) {
-            delay(3.seconds)  // the delay of 3 seconds
+            delay(1.5.seconds)  // the delay of 3 seconds
             mIsLoading = false
 
             // Request Api

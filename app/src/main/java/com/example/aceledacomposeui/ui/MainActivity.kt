@@ -21,15 +21,18 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.navigation.NavType
 import com.example.aceledacomposeui.data.PreferenceManager
 import com.example.aceledacomposeui.ui.theme.AceledaComposeUITheme
 import com.example.aceledacomposeui.utils.Constants.ThemeMode
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.example.aceledacomposeui.ui.screen.AppScreen
 import com.example.aceledacomposeui.ui.ui.HomeNewScreen
 import com.example.aceledacomposeui.ui.ui.HomeScreenKt
+import com.example.aceledacomposeui.ui.ui.ItemDetailKt
 import com.example.aceledacomposeui.ui.ui.NotificationKt
 import com.example.aceledacomposeui.ui.ui.ProfileKt
 import dagger.hilt.android.AndroidEntryPoint
@@ -78,6 +81,8 @@ fun NavDatabaseGraph(mActivity: Activity) {
     ) {
 
         composable(route = AppScreen.HomeScreen.route) { navBackResult ->
+            // val index = navBackResult.arguments?.getInt("index") ?: 0
+
             HomeNewScreen(navController, mActivity, navBackResult)
         }
 
@@ -103,14 +108,59 @@ fun NavDatabaseGraph(mActivity: Activity) {
             NotificationKt(navController = navController)
         }
 
-        /* composable(
+        /*composable(
              route = AppScreen.UpdateScreen.route,
              arguments = listOf(navArgument("id") {
                  type = NavType.StringType
              })
          ){
-             EditUserName(navController)
+            it.arguments?.getString("id")?.let { mId ->
+                ItemDetailKt(navController = navController, mId = mId)
+
+            }
          }*/
+
+        /*composable(
+            route = AppScreen.UpdateScreen.route,
+            arguments = listOf(navArgument("id") {
+                type = NavType.StringType
+            }),
+            enterTransition = {
+            return@composable fadeIn(tween(1000))
+        }, exitTransition = {
+            return@composable fadeOut(tween(700))
+        }, popEnterTransition = {
+            return@composable slideIntoContainer(
+                AnimatedContentTransitionScope.SlideDirection.End, tween(700)
+            )
+        }) {
+            it.arguments?.getString("id")?.let { mId ->
+                ItemDetailKt(navController = navController, mId = mId)
+
+            }
+        }*/
+
+        composable(
+            route = AppScreen.UpdateScreen.route,
+            arguments = listOf(navArgument("id") {
+                type = NavType.StringType
+            }),
+            enterTransition = {
+                return@composable slideIntoContainer(
+                    AnimatedContentTransitionScope.SlideDirection.Start,
+                    tween(500)
+                )
+            }, exitTransition = {
+                return@composable  slideOutOfContainer(
+                    AnimatedContentTransitionScope.SlideDirection.Right,
+                    animationSpec = tween(500)
+                )
+            }) {
+            it.arguments?.getString("id")?.let { mId ->
+                ItemDetailKt(navController = navController, mId = mId)
+
+            }
+        }
     }
 }
 

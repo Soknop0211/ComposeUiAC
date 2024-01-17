@@ -8,6 +8,8 @@ import androidx.camera.core.ExperimentalGetImage
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.BorderStroke
@@ -265,7 +267,7 @@ fun HomeNewScreen(avController: NavController = rememberNavController(),
                 mViewModel
             )*/
 
-            BodyContent(mActivity)
+            BodyContent(mActivity, avController)
         }
     }
 
@@ -274,7 +276,8 @@ fun HomeNewScreen(avController: NavController = rememberNavController(),
 @Composable
 fun HomeBody(mActivity: Context,
              mList : List<HomeMainList> = ArrayList(),
-             mViewModel : HomeViewModel) {
+             mViewModel : HomeViewModel,
+             avController: NavController) {
     val horizontalDp = 12.dp
     val localDensity = LocalDensity.current
 
@@ -332,7 +335,7 @@ fun HomeBody(mActivity: Context,
                                         SliderRecommended()
                                     }
                                     "special_service" -> {
-                                        SpecialServiceList()
+                                        SpecialServiceList( avController)
                                     }
                                     "special_offer" -> {
                                         SpecialOfferList(horizontalDp, localDensity)
@@ -361,7 +364,7 @@ fun HomeBody(mActivity: Context,
 
 @androidx.annotation.OptIn(ExperimentalGetImage::class)
 @Composable
-fun BodyContent(mActivity: Activity ?= null) {
+fun BodyContent(mActivity: Activity ?= null, avController: NavController) {
     val rememberScrollState = rememberScrollState()
     val horizontalDp = 12.dp
     val localDensity = LocalDensity.current
@@ -392,7 +395,7 @@ fun BodyContent(mActivity: Activity ?= null) {
             ){
                 SliderRecommended()
 
-                SpecialServiceList()
+                SpecialServiceList(avController)
 
                 SpecialOfferList(horizontalDp, localDensity)
 
@@ -1028,7 +1031,7 @@ private fun InitSlider(mIsAdvertise : Boolean = false) {
 }
 
 @Composable
-private fun SpecialServiceList() {
+private fun SpecialServiceList(avController: NavController) {
     Box(
         modifier = Modifier
             .padding(start = 20.dp, end = 20.dp, top = 10.dp, bottom = 5.dp)
@@ -1065,14 +1068,14 @@ private fun SpecialServiceList() {
     ) {
         item {
             mList.forEachIndexed { index, _ ->
-                CardSpecialItem(index = index, if (index == mList.size - 1) 10.dp else 3.dp)
+                CardSpecialItem(index = index, if (index == mList.size - 1) 10.dp else 3.dp, avController)
             }
         }
     }
 }
 
 @Composable
-fun CardSpecialItem(index: Int = 0, end: Dp = 0.dp) {
+fun CardSpecialItem(index: Int = 0, end: Dp = 0.dp, avController: NavController) {
     val wd = LocalConfiguration.current.screenWidthDp
     val midWd = ((wd / 2) + (wd / 4) ).dp
 
@@ -1081,7 +1084,10 @@ fun CardSpecialItem(index: Int = 0, end: Dp = 0.dp) {
             .width(midWd)
             .wrapContentSize()
             .padding(top = 5.dp, bottom = 5.dp, start = 10.dp, end = end)
-            .clickable { },
+            .clickable {
+                // avController.navigate(AppScreen.UpdateScreen.route)
+                avController.navigate(AppScreen.UpdateScreen.getItemId(mId = "mItemIdTesting"))
+            },
 
         shape = RoundedCornerShape(10.dp),
         elevation = CardDefaults.cardElevation(
@@ -1525,6 +1531,8 @@ fun FloatingAction(isVisibleButton : Boolean, scrollState: ScrollState) {
 
     AnimatedVisibility(
         visible = isVisibleButton,
+        enter = fadeIn(animationSpec = tween(500)),
+        exit = fadeOut(animationSpec = tween(2000)),
         /*enter = slideInVertically(),
         exit = slideOutVertically(),*/
         modifier = Modifier
@@ -1558,6 +1566,6 @@ fun FloatingAction(isVisibleButton : Boolean, scrollState: ScrollState) {
 @Composable
 fun HomeNewPreview() {
     AceledaComposeUITheme {
-        BodyContent()
+        BodyContent(avController = rememberNavController())
     }
 }

@@ -90,10 +90,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
 import com.example.aceledacomposeui.R
-import com.example.aceledacomposeui.data.PreferenceManager
 import com.example.aceledacomposeui.model.HomeExtraModel
-import com.example.aceledacomposeui.model.HomeItemModel
-import com.example.aceledacomposeui.model.User
 import com.example.aceledacomposeui.ui.screen.AppScreen
 import com.example.aceledacomposeui.ui.theme.AceledaBankLogo
 import com.example.aceledacomposeui.ui.theme.AceledaComposeUITheme
@@ -107,10 +104,7 @@ import com.example.aceledacomposeui.ui.theme.SecondYellow
 import com.example.aceledacomposeui.ui.theme.TransparentLight
 import com.example.aceledacomposeui.ui.theme.White
 import com.example.aceledacomposeui.ui.theme.Yellow
-import com.example.aceledacomposeui.utils.Constants
-import com.example.aceledacomposeui.utils.Constants.UserItem
 import com.example.aceledacomposeui.utils.Screen
-import com.example.aceledacomposeui.utils.Utils
 import com.example.aceledacomposeui.utils.Utils.getListExtraHomeMenu
 import com.example.aceledacomposeui.utils.Utils.getListHomeMenu
 import com.example.aceledacomposeui.utils.fontFamily
@@ -119,7 +113,6 @@ import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPagerIndicator
 import com.google.accompanist.pager.calculateCurrentOffsetForPage
 import com.google.accompanist.pager.rememberPagerState
-import com.google.gson.Gson
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.yield
@@ -260,8 +253,7 @@ fun DrawerHeader(
     avController: NavController,
     mProfileClick: () -> Unit,
     modifier: Modifier = Modifier,
-    mNavBackStackEntry : NavBackStackEntry,
-    mActivity : Activity
+    mNavBackStackEntry: NavBackStackEntry
 ) {
     val wd = LocalConfiguration.current.screenWidthDp
     val midWd = ((wd / 2) + (wd / 4)).dp
@@ -345,7 +337,7 @@ fun DrawerContent(avController: NavController,
             .background(Primary),
         verticalArrangement = Arrangement.SpaceBetween
     ) {
-        DrawerHeader(avController, mProfileClick, mNavBackStackEntry = mNavBackStackEntry, mActivity = mActivity)
+        DrawerHeader(avController, mProfileClick, mNavBackStackEntry = mNavBackStackEntry)
 
         LazyColumn(
             modifier = Modifier
