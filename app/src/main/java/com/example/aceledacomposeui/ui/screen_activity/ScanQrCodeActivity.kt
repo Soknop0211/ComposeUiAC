@@ -5,6 +5,7 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
 import android.graphics.PointF
 import android.os.Bundle
 import android.util.Log
@@ -20,10 +21,13 @@ import androidx.camera.core.ImageProxy
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -40,6 +44,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -49,17 +54,30 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.asAndroidBitmap
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.toComposeRect
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.unit.IntRect
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
@@ -71,6 +89,7 @@ import com.google.mlkit.vision.barcode.BarcodeScannerOptions
 import com.google.mlkit.vision.barcode.BarcodeScanning
 import com.google.mlkit.vision.barcode.common.Barcode
 import com.google.mlkit.vision.common.InputImage
+import kotlinx.coroutines.delay
 import java.util.concurrent.Executors
 
 class ScanQrCodeActivity : ComponentActivity() {
@@ -380,3 +399,165 @@ fun DrawScope.drawBounds(topLeft: PointF, size: Size, color: Color, stroke: Floa
         style = Stroke(width = stroke)
     )
 }
+
+
+//========================== Test Camera ========================
+
+@Preview(showBackground = true)
+@Composable
+fun TestCameraPreview() {
+    AceledaComposeUITheme {
+
+    }
+}
+
+@Composable
+fun TransparentClipLayout(
+    modifier: Modifier,
+    imageBitmap: ImageBitmap,
+    width: Dp,
+    height: Dp,
+    offsetY: Dp,
+    crop: Boolean = false,
+    onCropSuccess: (ImageBitmap) -> Unit
+) {
+
+    val offsetInPx: Float
+    val widthInPx: Float
+    val heightInPx: Float
+
+    with(LocalDensity.current) {
+        offsetInPx = offsetY.toPx()
+        widthInPx = width.toPx()
+        heightInPx = height.toPx()
+    }
+
+    BoxWithConstraints(modifier) {
+
+        val composableWidth = constraints.maxWidth
+        val composableHeight = constraints.maxHeight
+
+
+        val widthRatio = imageBitmap.width / composableWidth.toFloat()
+        val heightRatio = imageBitmap.height / composableHeight.toFloat()
+
+        val rectDraw = remember {
+            Rect(
+                offset = Offset(
+                    x = (composableWidth - widthInPx) / 2f,
+                    y = offsetInPx
+                ),
+                size = Size(widthInPx, heightInPx)
+            )
+        }
+
+        val rectCrop by remember {
+            mutableStateOf(
+                IntRect(
+                    offset = IntOffset(
+                        (rectDraw.left * widthRatio).toInt(),
+                        (rectDraw.top * heightRatio).toInt()
+                    ),
+                    size = IntSize(
+                        (rectDraw.width * widthRatio).toInt(),
+                        (rectDraw.height * heightRatio).toInt()
+                    )
+                )
+            )
+        }
+
+        LaunchedEffect(crop) {
+            if (crop) {
+                delay(500)
+                val croppedBitmap = Bitmap.createBitmap(
+                    imageBitmap.asAndroidBitmap(),
+                    rectCrop.left,
+                    rectCrop.top,
+                    rectCrop.width,
+                    rectCrop.height
+                ).asImageBitmap()
+
+                onCropSuccess(croppedBitmap)
+            }
+        }
+
+        Canvas(modifier = Modifier.fillMaxSize()) {
+
+            if (!crop) {
+                drawImage(
+                    image = imageBitmap,
+                    dstSize = IntSize(size.width.toInt(), size.height.toInt())
+                )
+            }
+
+            with(drawContext.canvas.nativeCanvas) {
+                val checkPoint = saveLayer(null, null)
+
+                if (!crop) {
+                    // Destination
+                    drawRect(Color(0x77000000))
+
+                    // Source
+                    drawRoundRect(
+                        topLeft = rectDraw.topLeft,
+                        size = rectDraw.size,
+                        cornerRadius = CornerRadius(30f, 30f),
+                        color = Color.Transparent,
+                        blendMode = BlendMode.Clear
+                    )
+
+                } else {
+                    // Destination
+                    drawRoundRect(
+                        topLeft = rectDraw.topLeft,
+                        size = rectDraw.size,
+                        cornerRadius = CornerRadius(30f, 30f),
+                        color = Color.Red,
+                    )
+
+                    // Source
+                    drawImage(
+                        image = imageBitmap,
+                        dstSize = IntSize(size.width.toInt(), size.height.toInt()),
+                        blendMode = BlendMode.SrcIn
+                    )
+                }
+
+                restoreToCount(checkPoint)
+            }
+        }
+    }
+}
+
+/*@Composable
+fun ShowCroppedImageDialog(imageBitmap: ImageBitmap, onDismissRequest: () -> Unit) {
+    androidx.compose.material3.AlertDialog(
+        onDismissRequest = onDismissRequest,
+        text = {
+            Image(
+                modifier = Modifier.fillMaxWidth().aspectRatio(),
+                contentScale = ContentScale.Fit,
+                bitmap = imageBitmap,
+                contentDescription = "result"
+            )
+        },
+        confirmButton = {
+            TextButton(
+                onClick = {
+                    onDismissRequest()
+                }
+            ) {
+                Text("Confirm")
+            }
+        },
+        dismissButton = {
+            TextButton(
+                onClick = {
+                    onDismissRequest()
+                }
+            ) {
+                Text("Dismiss")
+            }
+        }
+    )
+}*/

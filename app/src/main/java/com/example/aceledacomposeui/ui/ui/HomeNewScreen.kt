@@ -6,9 +6,13 @@ import android.content.Context
 import android.util.Log
 import androidx.camera.core.ExperimentalGetImage
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.expandIn
+import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -41,6 +45,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material3.Card
@@ -60,6 +65,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -90,7 +96,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.util.lerp
@@ -255,10 +260,12 @@ fun HomeNewScreen(avController: NavController = rememberNavController(),
                 }
             )
 
-            HomeBody(mActivity,
+            /*HomeBody(mActivity,
                 mViewModel.mHomeList.observeAsState().value ?: Utils.mainCategory(),
                 mViewModel
-            )
+            )*/
+
+            BodyContent(mActivity)
         }
     }
 
@@ -345,7 +352,6 @@ fun HomeBody(mActivity: Context,
                             }
                         }
                     }
-
                 }
 
             }
@@ -355,31 +361,21 @@ fun HomeBody(mActivity: Context,
 
 @androidx.annotation.OptIn(ExperimentalGetImage::class)
 @Composable
-fun BodyContent(mActivity: Activity) {
+fun BodyContent(mActivity: Activity ?= null) {
     val rememberScrollState = rememberScrollState()
     val horizontalDp = 12.dp
     val localDensity = LocalDensity.current
 
-    Log.i("ScrollValue", "current: ${rememberScrollState.value}, max: ${rememberScrollState.maxValue}")
-
-    val reachedEnd = (rememberScrollState.value + rememberScrollState.maxValue) >= rememberScrollState.maxValue
-   /* if (rememberScrollState.value == rememberScrollState.maxValue) {
-        Log.i("ScrollValue", "End Test")
-        isVisibleButton = true
-    } else {
-        isVisibleButton = false
-    }*/
-
-    /*var isButtonEnabled by remember { mutableStateOf(false) }
-    LaunchedEffect(rememberScrollState.canScrollForward) {
-        if (!rememberScrollState.canScrollForward) {
-            isButtonEnabled = true
-        } else {
-            isButtonEnabled = false
+    val endReached by remember {
+        derivedStateOf {
+            rememberScrollState.value == rememberScrollState.maxValue
         }
-    }*/
+    }
 
-    /*Box(modifier = Modifier.fillMaxSize()) {
+    Box (
+        modifier = Modifier
+            .fillMaxSize()
+    ){
         Column(
             modifier = Modifier
                 .verticalScroll(rememberScrollState),
@@ -404,47 +400,23 @@ fun BodyContent(mActivity: Activity) {
 
                 SliderRecommended(mIsAdvertise = true)
 
-                *//* CustomServiceFavorite(horizontalDp) *//*
-
-                FloatingAction(!rememberScrollState.canScrollForward)
+                /*CustomServiceFavorite(horizontalDp)*/
 
                 Spacer(modifier = Modifier.padding(10.dp))
+
             }
 
         }
-    }*/
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState),
-    ) {
-        CategoriesMenu(localDensity, mActivity)
-
-        Categories2Item(horizontalDp)
-
-        RecentTransaction(horizontalDp)
-
-        Column (
+        Column(
             modifier = Modifier
-                .background(color = LightGray)
-        ){
-            SliderRecommended()
-
-            SpecialServiceList()
-
-            SpecialOfferList(horizontalDp, localDensity)
-
-            CallCenterList(horizontalDp, localDensity)
-
-            SliderRecommended(mIsAdvertise = true)
-
-            FloatingAction(reachedEnd)
-
-             CustomServiceFavorite(horizontalDp)
+                .padding()
+                .align(Alignment.BottomEnd)
+        ) {
+            FloatingAction(endReached, rememberScrollState)
         }
-
     }
+
 }
 
 @Composable
@@ -524,11 +496,10 @@ private fun CategoriesMenu(mDensity: Density = LocalDensity.current, mActivity: 
                         .clickable {
                             if (mList[index].id == "top_up") {
                                 MobileTopUpActivity.start(mActivity!!)
-                            } else if (mList[index].id == "scan_qr"){
+                            } else if (mList[index].id == "scan_qr") {
                                 ScanQrCodeActivity.start(mActivity!!)
                             }
-                        }
-                    ,
+                        },
                     colors = CardDefaults.cardColors(
                         containerColor = ThirdPrimary,
                     ),
@@ -660,7 +631,7 @@ private fun CardCategoriesItem2(index : Int) {
         Box (
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
-                .heightIn(80.dp)
+                .heightIn(100.dp)
         ){
             if (index % 2 == 0) {
                 Column(
@@ -694,10 +665,10 @@ private fun CardCategoriesItem2(index : Int) {
                                 modifier = Modifier
                                     .size(25.dp)
                                     .padding(vertical = 5.dp)
-                                    .clickable (
+                                    .clickable(
                                         interactionSource = remember { MutableInteractionSource() },
                                         indication = null
-                                    ){
+                                    ) {
                                         isExpanded = !isExpanded
                                     }
                             )
@@ -1549,66 +1520,37 @@ private fun CallCenterList(horizontalDp : Dp = 10.dp, mDensity : Density = Local
 }
 
 @Composable
-fun FloatingAction(isVisibleButton : Boolean) {
+fun FloatingAction(isVisibleButton : Boolean, scrollState: ScrollState) {
+    val coroutineScope = rememberCoroutineScope()
+
     AnimatedVisibility(
         visible = isVisibleButton,
-        enter = expandIn { IntSize(width = 1, height = 1) }
+        /*enter = slideInVertically(),
+        exit = slideOutVertically(),*/
+        modifier = Modifier
+            .padding(5.dp)
     ) {
-        if (isVisibleButton){
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(start = 20.dp, end = 20.dp, top = 10.dp, bottom = 15.dp)
-            ){
-                FloatingActionButton(
-                    onClick = {
-
-                    },
-                    containerColor = BlueLightTxt,
-                    shape = CircleShape,
-                    elevation = FloatingActionButtonDefaults.elevation(2.dp),
-                    modifier = Modifier
-                        .padding(5.dp)
-                        .align(Alignment.Center)
-
-                ) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_account_card),
-                        contentDescription = "Reddit icon",
-                        tint = White,
-                    )
+        FloatingActionButton(
+            onClick = {
+                coroutineScope.launch {
+                    scrollState.animateScrollTo(0, animationSpec = tween(2000))
                 }
-            }
+            },
+            containerColor = BlueLightTxt,
+            shape = CircleShape,
+            elevation = FloatingActionButtonDefaults.elevation(2.dp),
+            modifier = Modifier
+                .size(60.dp)
+                .padding(5.dp)
+
+        ) {
+            Icon(
+                imageVector = Icons.Filled.KeyboardArrowUp,
+                contentDescription = "Reddit icon",
+                tint = White,
+            )
         }
     }
-    /*AnimatedVisibility(
-        visible = isVisibleButton,
-        enter = expandIn { IntSize(width = 1, height = 1) }
-    ) {
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(start = 20.dp, end = 20.dp, top = 10.dp, bottom = 15.dp)
-        ){
-            FloatingActionButton(
-                onClick = {
-
-                },
-                contentColor = BlueLightTxt,
-                shape = CircleShape,
-                elevation = FloatingActionButtonDefaults.elevation(2.dp),
-                modifier = Modifier
-                    .padding(5.dp)
-                    .align(Alignment.Center)
-
-            ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_qrcode_home),
-                    contentDescription = "Reddit icon",
-                )
-            }
-        }
-    }*/
 }
 
 
@@ -1616,6 +1558,6 @@ fun FloatingAction(isVisibleButton : Boolean) {
 @Composable
 fun HomeNewPreview() {
     AceledaComposeUITheme {
-        Categories2Item()
+        BodyContent()
     }
 }
