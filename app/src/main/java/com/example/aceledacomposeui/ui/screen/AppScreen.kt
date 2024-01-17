@@ -11,6 +11,8 @@ sealed class AppScreen(val route: String) {
     object UpdateScreen : AppScreen(ConstantAppScreenName.UpdateScreen + "/{id}") {
         fun getItemId(mId : String) : String = "${ConstantAppScreenName.UpdateScreen}/$mId"
     }
+
+    object MAIN_SCREEN : AppScreen("main")
 }
 
 object ConstantAppScreenName {

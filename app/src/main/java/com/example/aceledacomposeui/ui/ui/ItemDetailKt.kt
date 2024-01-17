@@ -446,6 +446,7 @@ private fun Body(scroll: ScrollState) {
                 modifier = Modifier
                     .padding(10.dp)
             ){
+
                 Row {
                     Image(
                         modifier = Modifier

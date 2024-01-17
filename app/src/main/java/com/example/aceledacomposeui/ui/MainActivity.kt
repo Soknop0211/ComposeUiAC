@@ -16,10 +16,15 @@ import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavType
 import com.example.aceledacomposeui.data.PreferenceManager
@@ -69,7 +74,7 @@ fun NavDatabaseGraph(mActivity: Activity) {
     val navController = rememberNavController()
     NavHost(
         navController = navController,
-        startDestination = AppScreen.HomeScreen.route,
+        startDestination = AppScreen.HomeNewScreen.route,
         /*enterTransition = { // push
             slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Left, animationSpec = tween(700))
         },
@@ -80,10 +85,19 @@ fun NavDatabaseGraph(mActivity: Activity) {
         }*/
     ) {
 
-        composable(route = AppScreen.HomeScreen.route) { navBackResult ->
+        composable(
+            route = AppScreen.HomeNewScreen.route,
+        ) { navBackResult ->
             // val index = navBackResult.arguments?.getInt("index") ?: 0
 
-            HomeNewScreen(navController, mActivity, navBackResult)
+            HomeNewScreen(
+                navController,
+                mActivity,
+                navBackResult,
+                onNavigateToSecondScreen = {
+                    navController.navigate(AppScreen.UpdateScreen.route)
+                }
+            )
         }
 
         composable(route = AppScreen.SeeMoreScreen.route) {
@@ -94,7 +108,7 @@ fun NavDatabaseGraph(mActivity: Activity) {
             ProfileKt(navController, mActivity)
         }
 
-        composable(route = AppScreen.HomeNewScreen.route) {
+        composable(route = AppScreen.HomeScreen.route) {
             HomeScreenKt(navController)
         }
 
@@ -104,6 +118,18 @@ fun NavDatabaseGraph(mActivity: Activity) {
 
         composable(
             route = AppScreen.NotificationScreen.route,
+            enterTransition = {
+                slideIntoContainer(
+                    AnimatedContentTransitionScope.SlideDirection.Left,
+                    animationSpec = tween(700)
+                )
+            },
+            exitTransition = {
+                slideOutOfContainer(
+                    AnimatedContentTransitionScope.SlideDirection.Right,
+                    animationSpec = tween(700)
+                )
+            }
         ) {
             NotificationKt(navController = navController)
         }
@@ -140,7 +166,7 @@ fun NavDatabaseGraph(mActivity: Activity) {
             }
         }*/
 
-        composable(
+        /*composable(
             route = AppScreen.UpdateScreen.route,
             arguments = listOf(navArgument("id") {
                 type = NavType.StringType
@@ -160,8 +186,30 @@ fun NavDatabaseGraph(mActivity: Activity) {
                 ItemDetailKt(navController = navController, mId = mId)
 
             }
+        }*/
+
+        composable(
+            route = AppScreen.UpdateScreen.route,
+            arguments = listOf(navArgument("id") {
+                type = NavType.StringType
+            }),
+            enterTransition = {
+                slideIntoContainer(
+                    AnimatedContentTransitionScope.SlideDirection.Left,
+                    animationSpec = tween(700)
+                )
+            },
+            exitTransition = {
+                slideOutOfContainer(
+                    AnimatedContentTransitionScope.SlideDirection.Right,
+                    animationSpec = tween(700)
+                )
+            })
+        {
+            it.arguments?.getString("id")?.let { mId ->
+                ItemDetailKt(navController = navController, mId = mId)
+            }
         }
     }
 }
-
 

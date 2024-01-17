@@ -152,9 +152,10 @@ import kotlin.math.roundToInt
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeNewScreen(avController: NavController = rememberNavController(),
+fun HomeNewScreen(avController: NavController,
                   mActivity: Activity,
                   mNavBackStackEntry : NavBackStackEntry,
+                  onNavigateToSecondScreen: () -> Unit = {},
                   mViewModel : HomeViewModel = hiltViewModel()) {
 
     val verticalGradientBrush = Brush.verticalGradient(
@@ -267,7 +268,11 @@ fun HomeNewScreen(avController: NavController = rememberNavController(),
                 mViewModel
             )*/
 
-            BodyContent(mActivity, avController)
+            BodyContent(
+                mActivity,
+                avController,
+                onNavigateToSecondScreen
+            )
         }
     }
 
@@ -335,7 +340,7 @@ fun HomeBody(mActivity: Context,
                                         SliderRecommended()
                                     }
                                     "special_service" -> {
-                                        SpecialServiceList( avController)
+                                        SpecialServiceList()
                                     }
                                     "special_offer" -> {
                                         SpecialOfferList(horizontalDp, localDensity)
@@ -364,7 +369,9 @@ fun HomeBody(mActivity: Context,
 
 @androidx.annotation.OptIn(ExperimentalGetImage::class)
 @Composable
-fun BodyContent(mActivity: Activity ?= null, avController: NavController) {
+fun BodyContent(mActivity: Activity ?= null,
+                avController: NavController,
+                onNavigateToSecondScreen: () -> Unit = {}) {
     val rememberScrollState = rememberScrollState()
     val horizontalDp = 12.dp
     val localDensity = LocalDensity.current
@@ -395,7 +402,7 @@ fun BodyContent(mActivity: Activity ?= null, avController: NavController) {
             ){
                 SliderRecommended()
 
-                SpecialServiceList(avController)
+                SpecialServiceList(onNavigateToSecondScreen)
 
                 SpecialOfferList(horizontalDp, localDensity)
 
@@ -1031,7 +1038,9 @@ private fun InitSlider(mIsAdvertise : Boolean = false) {
 }
 
 @Composable
-private fun SpecialServiceList(avController: NavController) {
+private fun SpecialServiceList(
+    onNavigateToSecondScreen: () -> Unit = {}
+) {
     Box(
         modifier = Modifier
             .padding(start = 20.dp, end = 20.dp, top = 10.dp, bottom = 5.dp)
@@ -1068,14 +1077,14 @@ private fun SpecialServiceList(avController: NavController) {
     ) {
         item {
             mList.forEachIndexed { index, _ ->
-                CardSpecialItem(index = index, if (index == mList.size - 1) 10.dp else 3.dp, avController)
+                CardSpecialItem(index = index, if (index == mList.size - 1) 10.dp else 3.dp, onNavigateToSecondScreen)
             }
         }
     }
 }
 
 @Composable
-fun CardSpecialItem(index: Int = 0, end: Dp = 0.dp, avController: NavController) {
+fun CardSpecialItem(index: Int = 0, end: Dp = 0.dp, onNavigateToSecondScreen: () -> Unit = {}) {
     val wd = LocalConfiguration.current.screenWidthDp
     val midWd = ((wd / 2) + (wd / 4) ).dp
 
@@ -1086,7 +1095,8 @@ fun CardSpecialItem(index: Int = 0, end: Dp = 0.dp, avController: NavController)
             .padding(top = 5.dp, bottom = 5.dp, start = 10.dp, end = end)
             .clickable {
                 // avController.navigate(AppScreen.UpdateScreen.route)
-                avController.navigate(AppScreen.UpdateScreen.getItemId(mId = "mItemIdTesting"))
+                //avController.navigate(AppScreen.UpdateScreen.getItemId(mId = "mItemIdTesting"))
+                onNavigateToSecondScreen.invoke()
             },
 
         shape = RoundedCornerShape(10.dp),
