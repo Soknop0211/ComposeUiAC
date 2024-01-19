@@ -22,11 +22,15 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.systemBars
+import androidx.compose.foundation.layout.windowInsetsBottomHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -94,6 +98,7 @@ import com.example.aceledacomposeui.ui.theme.Primary
 import com.example.aceledacomposeui.ui.theme.Red
 import com.example.aceledacomposeui.ui.theme.SecondYellow
 import com.example.aceledacomposeui.ui.theme.White
+import com.example.aceledacomposeui.ui.ui.KeyBoardKt
 import com.example.aceledacomposeui.ui.widget.DottedShape
 import com.example.aceledacomposeui.ui.widget.ToolAppBar
 import com.example.aceledacomposeui.utils.Constants.Dollar
@@ -305,6 +310,10 @@ fun KeyBoardContentScreen() {
                     )
                 }
             }
+
+            item {
+                Spacer(modifier = Modifier.windowInsetsBottomHeight(WindowInsets.systemBars))
+            }
         }
 
 
@@ -327,6 +336,7 @@ fun KeyBoardContentScreen() {
             Box (
                 modifier = Modifier
                     .background(color = Primary)
+                    .clickable {  }
             ){
                 Column (
                     modifier = Modifier
@@ -355,111 +365,22 @@ fun KeyBoardContentScreen() {
                     shrinkTowards = Alignment.CenterVertically
                 ),
             ) {
-                Box(
-                    modifier = Modifier
-                        .padding(top = 5.dp)
-                        .fillMaxWidth()
-                        .background(color = LightGray)
-                ) {
-                    LazyVerticalGrid(
-                        modifier = Modifier
-                            .height((columnHeightDp))
-                            .fillMaxWidth(),
-                        columns = GridCells.Fixed(3),
-                        content = {
-                            itemsIndexed(items = mList) { index, _ ->
-                                val mIsNotNumber = mList[index] == "." || mList[index] == "X"
-
-                                val cardShape = RoundedCornerShape(10.dp)
-
-                                androidx.compose.material3.Card(
-                                    modifier = Modifier
-                                        .padding(8.dp)
-                                        .onGloballyPositioned { coordinates ->
-                                            lineHeightDp =
-                                                with(mDensity) { (coordinates.size.height.toDp() + (8 * 3).dp) }
-
-                                            columnHeightDp = lineHeightDp * (mList.size / 3)
-                                        }
-                                        .shadow(
-                                            shape = cardShape,
-                                            ambientColor = Primary,
-                                            spotColor = Primary,
-                                            elevation = if(mIsNotNumber) 0.dp else 10.dp
-                                        )
-                                        .clickable (
-                                            interactionSource = remember { MutableInteractionSource() },
-                                            indication = if(mIsNotNumber) null else rememberRipple(color = Primary),
-                                        ){
-                                            var display: String = amountInput
-                                            if (mList[index].equals("x", ignoreCase = true)) {
-                                                if (!android.text.TextUtils.isEmpty(display)) {
-                                                    display = display.substring(0, display.length - 1)
-                                                    amountInput = display
-                                                }
-                                            } else {
-                                                if (mList[index] == "." && display.contains(".")) {
-
-                                                } else {
-                                                    display += mList[index]
-                                                }
-                                                amountInput = display
-                                            }
-                                        },
-                                    colors = CardDefaults.cardColors(
-                                        containerColor = if(mIsNotNumber) Color.Transparent else White,
-                                    ),
-                                    shape = cardShape,
-                                ) {
-                                    Row(
-                                        modifier = Modifier
-                                            .fillMaxSize(),
-                                        horizontalArrangement = Arrangement.SpaceBetween,
-                                        verticalAlignment = Alignment.CenterVertically
-                                    ) {
-                                        Column (
-                                            modifier = Modifier
-                                                .fillMaxWidth()
-                                                .align(Alignment.CenterVertically)
-                                                .weight(weight = 1f, fill = false)
-                                        ){
-                                            Column(
-                                                horizontalAlignment = Alignment.CenterHorizontally,
-                                                modifier = Modifier
-                                                    .align(Alignment.CenterHorizontally)
-                                                    .padding(8.dp)
-                                            ) {
-                                                if (mList[index].equals("x", true)) {
-                                                    Icon(
-                                                        painter = painterResource(id = R.drawable.icon_clear),
-                                                        contentDescription = "contentDescription",
-                                                        tint = Black,
-                                                        modifier = Modifier
-                                                            .fillMaxSize()
-                                                            .size(30.dp)
-                                                            .align(Alignment.CenterHorizontally)
-                                                            .padding(horizontal = 5.dp))
-
-                                                } else {
-                                                    Text(
-                                                        text = mList[index],
-                                                        color = Black,
-                                                        maxLines = 1,
-                                                        fontFamily = FontFamily(Font(R.font.montserrat_medium_body)),
-                                                        fontWeight = FontWeight.Bold,
-                                                        style = TextStyle(fontSize = 15.sp),
-                                                        modifier = Modifier
-                                                            .padding(top = 10.dp, bottom = 5.dp)
-                                                    )
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
+                KeyBoardKt(onClick = {
+                    var display: String = amountInput
+                    if (it.equals("x", ignoreCase = true)) {
+                        if (!android.text.TextUtils.isEmpty(display)) {
+                            display = display.substring(0, display.length - 1)
+                            amountInput = display
                         }
-                    )
-                }
+                    } else {
+                        if (it == "." && display.contains(".")) {
+
+                        } else {
+                            display += it
+                        }
+                        amountInput = display
+                    }
+                })
             }
         }
 

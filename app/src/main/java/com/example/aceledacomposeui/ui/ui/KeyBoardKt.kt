@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -22,10 +23,12 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -40,6 +43,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
@@ -48,6 +52,8 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.LocalTextInputService
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -80,6 +86,7 @@ fun KeyBoardKt(onClick: (String) -> Unit, mDensity: Density = LocalDensity.curre
 
     Box(
         modifier = Modifier
+            .padding(top = 5.dp)
             .fillMaxWidth()
             .background(color = LightGray)
     ) {
@@ -90,24 +97,35 @@ fun KeyBoardKt(onClick: (String) -> Unit, mDensity: Density = LocalDensity.curre
             columns = GridCells.Fixed(3),
             content = {
                 itemsIndexed(items = mList) { index, _ ->
-                    val mIsNotNumber = mList[index] == "·" || mList[index] == "X"
+                    val mIsNotNumber = mList[index] == "." || mList[index] == "X"
+
+                    val cardShape = RoundedCornerShape(10.dp)
+
                     Card(
                         modifier = Modifier
                             .padding(8.dp)
                             .onGloballyPositioned { coordinates ->
                                 lineHeightDp =
-                                    with(mDensity) { (coordinates.size.height.toDp() + 20.dp) }
+                                    with(mDensity) { (coordinates.size.height.toDp() + (8 * 3).dp) }
 
                                 columnHeightDp = lineHeightDp * (mList.size / 3)
                             }
-                            .clickable {
+                            .shadow(
+                                shape = cardShape,
+                                ambientColor = Primary,
+                                spotColor = Primary,
+                                elevation = if(mIsNotNumber) 0.dp else 10.dp
+                            )
+                            .clickable (
+                                interactionSource = remember { MutableInteractionSource() },
+                                indication = if(mIsNotNumber) null else rememberRipple(color = Primary),
+                            ){
                                 onClick.invoke(mList[index])
                             },
                         colors = CardDefaults.cardColors(
                             containerColor = if(mIsNotNumber) Color.Transparent else White,
                         ),
-                        elevation = CardDefaults.cardElevation(if(mIsNotNumber) 0.dp else 5.dp),
-                        shape = RoundedCornerShape(10.dp),
+                        shape = cardShape,
                     ) {
                         Row(
                             modifier = Modifier
@@ -127,15 +145,29 @@ fun KeyBoardKt(onClick: (String) -> Unit, mDensity: Density = LocalDensity.curre
                                         .align(Alignment.CenterHorizontally)
                                         .padding(8.dp)
                                 ) {
-                                    Text(
-                                        text = mList[index],
-                                        color = Black,
-                                        maxLines = 1,
-                                        fontWeight = FontWeight.Bold,
-                                        style = TextStyle(fontSize = 13.sp),
-                                        modifier = Modifier
-                                            .padding(top = 10.dp, bottom = 5.dp)
-                                    )
+                                    if (mList[index].equals("x", true)) {
+                                        Icon(
+                                            painter = painterResource(id = R.drawable.icon_clear),
+                                            contentDescription = "contentDescription",
+                                            tint = Black,
+                                            modifier = Modifier
+                                                .fillMaxSize()
+                                                .size(30.dp)
+                                                .align(Alignment.CenterHorizontally)
+                                                .padding(horizontal = 5.dp))
+
+                                    } else {
+                                        Text(
+                                            text = mList[index],
+                                            color = Black,
+                                            maxLines = 1,
+                                            fontFamily = FontFamily(Font(R.font.montserrat_medium_body)),
+                                            fontWeight = FontWeight.Bold,
+                                            style = TextStyle(fontSize = 15.sp),
+                                            modifier = Modifier
+                                                .padding(top = 10.dp, bottom = 5.dp)
+                                        )
+                                    }
                                 }
                             }
                         }

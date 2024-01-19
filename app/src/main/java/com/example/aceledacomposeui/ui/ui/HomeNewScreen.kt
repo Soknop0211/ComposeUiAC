@@ -197,7 +197,8 @@ fun HomeNewScreen(avController: NavController,
 
         Column(
             modifier = Modifier
-                .fillMaxSize(),
+                .fillMaxSize()
+                .background(color = Primary),
         ) {
             TopAppBar(
                 modifier = Modifier.background(verticalGradientBrush),
@@ -264,7 +265,8 @@ fun HomeNewScreen(avController: NavController,
                 }
             )
 
-            /*HomeBody(mActivity,
+            /*HomeBody(
+                mActivity,
                 mViewModel.mHomeList.observeAsState().value ?: Utils.mainCategory(),
                 mViewModel
             )*/
@@ -282,8 +284,7 @@ fun HomeNewScreen(avController: NavController,
 @Composable
 fun HomeBody(mActivity: Context,
              mList : List<HomeMainList> = ArrayList(),
-             mViewModel : HomeViewModel,
-             avController: NavController) {
+             mViewModel : HomeViewModel) {
     val horizontalDp = 12.dp
     val localDensity = LocalDensity.current
 
@@ -362,6 +363,7 @@ fun HomeBody(mActivity: Context,
                         }
                     }
                 }
+
 
             }
         }
@@ -1537,8 +1539,8 @@ fun FloatingAction(isVisibleButton : Boolean, scrollState: ScrollState) {
 
     AnimatedVisibility(
         visible = isVisibleButton,
-        enter = fadeIn(animationSpec = tween(500)),
-        exit = fadeOut(animationSpec = tween(2000)),
+        enter = fadeIn(animationSpec = tween(1000)),
+        exit = fadeOut(animationSpec = tween(1000)),
         /*enter = slideInVertically(),
         exit = slideOutVertically(),*/
         modifier = Modifier
