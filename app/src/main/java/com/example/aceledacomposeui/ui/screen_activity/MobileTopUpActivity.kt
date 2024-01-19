@@ -6,6 +6,7 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -367,7 +368,9 @@ fun TopUpContentScreen(mActivity: Activity ?= null) {
                         )
                     }
 
-                    if (checked){
+                    AnimatedVisibility(
+                        visible = checked
+                    ) {
                         EditTextEnterNumber(
                             label = "Favorite Name",
                             mLogo = R.drawable.ic_favorite,

@@ -109,6 +109,7 @@ import com.example.aceledacomposeui.R
 import com.example.aceledacomposeui.model.HomeExtraModel
 import com.example.aceledacomposeui.model.HomeMainList
 import com.example.aceledacomposeui.ui.screen.AppScreen
+import com.example.aceledacomposeui.ui.screen_activity.KeyBoardInputActivity
 import com.example.aceledacomposeui.ui.screen_activity.MobileTopUpActivity
 import com.example.aceledacomposeui.ui.screen_activity.ScanQrCodeActivity
 import com.example.aceledacomposeui.ui.theme.AceledaBankLogo
@@ -500,15 +501,10 @@ private fun CategoriesMenu(mDensity: Density = LocalDensity.current, mActivity: 
                             lineHeightDp =
                                 with(mDensity) { (coordinates.size.height.toDp()) }
 
-                            columnHeightDp =
-                                with(mDensity) { lineHeightDp * 3 }
+                            columnHeightDp = lineHeightDp * 3
                         }
                         .clickable {
-                            if (mList[index].id == "top_up") {
-                                MobileTopUpActivity.start(mActivity!!)
-                            } else if (mList[index].id == "scan_qr") {
-                                ScanQrCodeActivity.start(mActivity!!)
-                            }
+                            menuNext(mList[index].id, mActivity!!)
                         },
                     colors = CardDefaults.cardColors(
                         containerColor = ThirdPrimary,
@@ -1567,6 +1563,20 @@ fun FloatingAction(isVisibleButton : Boolean, scrollState: ScrollState) {
                 contentDescription = "Reddit icon",
                 tint = White,
             )
+        }
+    }
+}
+
+fun menuNext(id : String, mContext: Context) {
+    when (id) {
+        "top_up" -> {
+            MobileTopUpActivity.start(mContext)
+        }
+        "scan_qr" -> {
+            ScanQrCodeActivity.start(mContext)
+        }
+        "pay_me" -> {
+            KeyBoardInputActivity.start(mContext)
         }
     }
 }

@@ -7,4 +7,6 @@ object Constants {
     const val HomeItemList = "SaveHomeItemList"
     const val UserItem = "UserItem"
 
+    const val Dollar = "USD"
+    const val Khmer = "៛"
 }

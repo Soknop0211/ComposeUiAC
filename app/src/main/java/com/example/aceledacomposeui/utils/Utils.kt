@@ -1,5 +1,6 @@
 package com.example.aceledacomposeui.utils
 
+import android.app.Activity
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -7,6 +8,8 @@ import android.graphics.Matrix
 import android.media.ExifInterface
 import android.net.Uri
 import android.provider.MediaStore
+import android.view.View
+import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import com.example.aceledacomposeui.R
 import com.example.aceledacomposeui.model.HomeExtraModel
@@ -15,7 +18,6 @@ import com.example.aceledacomposeui.model.HomeMainList
 import com.example.aceledacomposeui.model.MobilePhonesData
 import com.example.aceledacomposeui.model.User
 import com.google.gson.Gson
-import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
 import java.io.ByteArrayOutputStream
 import java.io.File
@@ -328,6 +330,23 @@ object Utils {
     fun jsonToDataUserClass(data: String): User {
         val dataType = object : TypeToken<User>() {}.type
         return Gson().fromJson(data, dataType)
+    }
+
+    fun hideKeyboard(activity: Activity) {
+        val imm = activity.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+        //Find the currently focused view, so we can grab the correct window token from it.
+        var view = activity.currentFocus
+        //If no view currently has focus, create a new one, just so we can grab a window token from it
+        if (view == null) {
+            view = View(activity)
+        }
+        imm.hideSoftInputFromWindow(view.windowToken, 0)
+    }
+
+    fun hideSoftKeyboard(view: View) {
+        val inputMethodManager =
+            view.context.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+        inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
     }
 
 }

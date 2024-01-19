@@ -21,6 +21,12 @@
         android:theme="@style/Theme.AceledaComposeUI"
         tools:targetApi="s">
         <activity
+            android:name=".ui.screen_activity.KeyBoardInputActivity"
+            android:exported="false"
+            android:label="@string/title_activity_key_board_input"
+            android:windowSoftInputMode="adjustResize"
+            android:theme="@style/Theme.AceledaComposeUI" />
+        <activity
             android:name=".ui.screen_activity.ScanQrCodeActivity"
             android:exported="false"
             android:label="@string/title_activity_scan_qr_code"

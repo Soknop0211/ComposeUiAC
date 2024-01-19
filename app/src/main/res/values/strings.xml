@@ -4,4 +4,5 @@
     <string name="unable_to_read_image">Unable to read image</string>
     <string name="title_activity_mobile_top_up">MobileTopUpActivity</string>
     <string name="title_activity_scan_qr_code">ScanQrCodeActivity</string>
+    <string name="title_activity_key_board_input">KeyBoardInputActivity</string>
 </resources>
