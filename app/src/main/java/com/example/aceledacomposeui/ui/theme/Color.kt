@@ -17,6 +17,8 @@ val Red = Color(0xFFe1232e)
 val LightGray = Color(0xFFEAEDED)
 val Black = Color(0xFF000000)
 val Gray = Color(0xFF7C7C7C)
+val GrayBg = Color(0xFFd5d7dd)
+
 val LightGrayText = Color(0xFFD8CCCC)
 val TransparentLight = Color(0xFF602B608A)
 val TransparentDark = Color(0xFF09233c)

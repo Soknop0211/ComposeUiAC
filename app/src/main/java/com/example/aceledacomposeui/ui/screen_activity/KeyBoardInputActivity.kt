@@ -8,11 +8,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -20,7 +16,6 @@ import androidx.compose.foundation.interaction.PressInteraction
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
@@ -28,14 +23,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.windowInsetsBottomHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -43,8 +34,6 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
-import androidx.compose.material.ripple.rememberRipple
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -62,20 +51,16 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusEvent
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.SoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextRange
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -84,7 +69,6 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Density
-import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.Lifecycle
@@ -95,10 +79,9 @@ import com.example.aceledacomposeui.ui.theme.Black
 import com.example.aceledacomposeui.ui.theme.Gray
 import com.example.aceledacomposeui.ui.theme.LightGray
 import com.example.aceledacomposeui.ui.theme.Primary
-import com.example.aceledacomposeui.ui.theme.Red
 import com.example.aceledacomposeui.ui.theme.SecondYellow
-import com.example.aceledacomposeui.ui.theme.White
 import com.example.aceledacomposeui.ui.ui.KeyBoardKt
+import com.example.aceledacomposeui.ui.ui.KeyBoardLineBgKt
 import com.example.aceledacomposeui.ui.widget.DottedShape
 import com.example.aceledacomposeui.ui.widget.ToolAppBar
 import com.example.aceledacomposeui.utils.Constants.Dollar
@@ -186,7 +169,8 @@ fun KeyBoardContentScreen() {
                             .wrapContentSize()
                             .padding(horizontal = 10.dp, vertical = 5.dp)
                             .clickable {
-                                if (currency.equals(Dollar, true)) currency = Khmer else currency = Dollar
+                                if (currency.equals(Dollar, true)) currency = Khmer else currency =
+                                    Dollar
                             }
                     ) {
                         Text(
@@ -336,7 +320,7 @@ fun KeyBoardContentScreen() {
             Box (
                 modifier = Modifier
                     .background(color = Primary)
-                    .clickable {  }
+                    .clickable { }
             ){
                 Column (
                     modifier = Modifier
@@ -365,7 +349,7 @@ fun KeyBoardContentScreen() {
                     shrinkTowards = Alignment.CenterVertically
                 ),
             ) {
-                KeyBoardKt(onClick = {
+                KeyBoardLineBgKt(onClick = {
                     var display: String = amountInput
                     if (it.equals("x", ignoreCase = true)) {
                         if (!android.text.TextUtils.isEmpty(display)) {
