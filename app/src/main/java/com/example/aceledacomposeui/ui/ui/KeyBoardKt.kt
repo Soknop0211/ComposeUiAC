@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -366,11 +367,11 @@ fun KeyBoardLineBgKt(onClick: (String) -> Unit, mDensity: Density = LocalDensity
                     Card(
                         modifier = Modifier
                             .onGloballyPositioned { coordinates ->
-                                // Set column height using the LayoutCoordinates
-                                itemHeight =
-                                    with(mDensity) { (coordinates.size.height.toDp()) }
+                                if (itemHeight == 0.dp) {
+                                    itemHeight = with(mDensity) { (coordinates.size.height.toDp()) }
 
-                                columnHeightDp = itemHeight * (mList.size / 3)
+                                    columnHeightDp = itemHeight * (mList.size / 3)
+                                }
                             }
                             .clickable(
                                 interactionSource = remember { MutableInteractionSource() },
@@ -387,7 +388,7 @@ fun KeyBoardLineBgKt(onClick: (String) -> Unit, mDensity: Density = LocalDensity
                             modifier = Modifier
                                 .fillMaxSize(),
                             horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
+                            verticalAlignment = Alignment.CenterVertically,
                         ) {
                             Column (
                                 modifier = Modifier
@@ -396,10 +397,10 @@ fun KeyBoardLineBgKt(onClick: (String) -> Unit, mDensity: Density = LocalDensity
                                     .weight(weight = 1f, fill = false)
                             ){
                                 Column(
-                                    horizontalAlignment = Alignment.CenterHorizontally,
                                     modifier = Modifier
                                         .align(Alignment.CenterHorizontally)
                                         .padding(8.dp)
+                                        .fillMaxHeight()
                                 ) {
                                     if (mList[index].equals("x", true)) {
                                         Icon(
@@ -408,7 +409,7 @@ fun KeyBoardLineBgKt(onClick: (String) -> Unit, mDensity: Density = LocalDensity
                                             tint = Primary,
                                             modifier = Modifier
                                                 .fillMaxSize()
-                                                .size(30.dp)
+                                                .size(25.dp)
                                                 .align(Alignment.CenterHorizontally)
                                                 .padding(horizontal = 5.dp))
 

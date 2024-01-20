@@ -13,6 +13,7 @@ import androidx.activity.result.launch
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -44,6 +45,7 @@ import androidx.compose.material.icons.outlined.LocationOn
 import androidx.compose.material.icons.outlined.Lock
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material.icons.outlined.Phone
+import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -62,6 +64,7 @@ import androidx.compose.ui.AbsoluteAlignment
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
@@ -88,6 +91,7 @@ import com.example.aceledacomposeui.ui.theme.AcledaAppLogo
 import com.example.aceledacomposeui.ui.theme.Black
 import com.example.aceledacomposeui.ui.theme.LightGray
 import com.example.aceledacomposeui.ui.theme.Primary
+import com.example.aceledacomposeui.ui.theme.Red
 import com.example.aceledacomposeui.ui.theme.White
 import com.example.aceledacomposeui.ui.theme.Yellow
 import com.example.aceledacomposeui.ui.widget.ToolAppBar
@@ -288,7 +292,16 @@ fun ProfileKtItem(
         modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = 10.dp, vertical = 5.dp)
-            .clickable {},
+            .clickable (
+                interactionSource = remember { MutableInteractionSource() },
+                indication = rememberRipple(color = Primary),
+            ){}
+            .shadow(
+                shape = RoundedCornerShape(5.dp),
+                ambientColor = Primary,
+                spotColor = Primary,
+                elevation = 5.dp
+            ),
 
         shape = RoundedCornerShape(5.dp),
         elevation = CardDefaults.cardElevation(

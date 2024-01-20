@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -183,6 +184,12 @@ fun TopUpContentScreen(mActivity: Activity ?= null) {
             item {
                 Card(
                     modifier = Modifier
+                        .shadow(
+                            shape = RoundedCornerShape(0.dp),
+                            ambientColor = Primary,
+                            spotColor = Primary,
+                            elevation = 5.dp
+                        )
                         .fillMaxWidth()
                         .height(height),
                     backgroundColor = White,
@@ -206,6 +213,8 @@ fun TopUpContentScreen(mActivity: Activity ?= null) {
                                 contentDescription = "Localized description",
                             )
                         }
+
+                        Spacer(modifier = Modifier.padding(20.dp))
 
                         Column (
                             modifier = Modifier
@@ -235,7 +244,8 @@ fun TopUpContentScreen(mActivity: Activity ?= null) {
                             .border(1.dp, color = Gray, shape = RoundedCornerShape(10.dp))
                             .padding(horizontal = 10.dp, vertical = 5.dp)
                             .clickable {
-                                showAccountDialog = !showAccountDialog  // First false we assing not false is true to show dialog
+                                showAccountDialog =
+                                    !showAccountDialog  // First false we assing not false is true to show dialog
                             },
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
