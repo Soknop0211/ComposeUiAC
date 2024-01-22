@@ -7,7 +7,11 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -55,7 +59,6 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusEvent
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.SoftwareKeyboardController
@@ -68,7 +71,6 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.Lifecycle
@@ -80,7 +82,7 @@ import com.example.aceledacomposeui.ui.theme.Gray
 import com.example.aceledacomposeui.ui.theme.LightGray
 import com.example.aceledacomposeui.ui.theme.Primary
 import com.example.aceledacomposeui.ui.theme.SecondYellow
-import com.example.aceledacomposeui.ui.ui.KeyBoardKt
+import com.example.aceledacomposeui.ui.theme.fontMedium
 import com.example.aceledacomposeui.ui.ui.KeyBoardLineBgKt
 import com.example.aceledacomposeui.ui.widget.DottedShape
 import com.example.aceledacomposeui.ui.widget.ToolAppBar
@@ -169,8 +171,7 @@ fun KeyBoardContentScreen() {
                             .wrapContentSize()
                             .padding(horizontal = 10.dp, vertical = 5.dp)
                             .clickable {
-                                if (currency.equals(Dollar, true)) currency = Khmer else currency =
-                                    Dollar
+                                currency = if (currency.equals(Dollar, true)) Khmer else Dollar
                             }
                     ) {
                         Text(
@@ -178,7 +179,7 @@ fun KeyBoardContentScreen() {
                                 .align(Alignment.Top)
                                 .wrapContentSize(),
                             text = "$currency 096 107 0770",
-                            fontFamily = FontFamily(Font(R.font.montserrat_medium_body)),
+                            fontFamily = fontMedium,
                             color = Black
                         )
 
@@ -193,7 +194,7 @@ fun KeyBoardContentScreen() {
                     }
 
                     EditTextEnterKeyBoardNumber(
-                        label = "Mobile number",
+                        label = "Amount",
                         value = amountInput,
                         amountInput = {
                             amountInput = it
@@ -300,22 +301,6 @@ fun KeyBoardContentScreen() {
             }
         }
 
-
-        val mList = arrayOf(
-            "1", "2", "3", "4", "5",
-            "6", "7", "8", "9", ".",
-            "0", "X"
-        )
-        var columnHeightDp by remember {
-            mutableStateOf(0.dp)
-        }
-
-        var lineHeightDp by remember {
-            mutableStateOf(0.dp)
-        }
-
-        val mDensity: Density = LocalDensity.current
-
         Column {
             Box (
                 modifier = Modifier
@@ -342,12 +327,47 @@ fun KeyBoardContentScreen() {
 
             AnimatedVisibility(
                 visible = isShowKeyBoard,
-                enter = expandVertically(
-                    expandFrom = Alignment.CenterVertically
+                /*enter = expandVertically(
+                    animationSpec = tween(1000),
+                ),
+                exit = shrinkVertically(
+                    shrinkTowards = Alignment.CenterVertically,
+                    animationSpec = tween(100),
+                ),*/
+            ) {
+                Box(
+                    modifier = Modifier
+                        .animateContentSize(animationSpec = tween(1000))
+                ) {
+                    KeyBoardLineBgKt(onClick = {
+                        var display: String = amountInput
+                        if (it.equals("x", ignoreCase = true)) {
+                            if (!android.text.TextUtils.isEmpty(display)) {
+                                display = display.substring(0, display.length - 1)
+                                amountInput = display
+                            }
+                        } else {
+                            if (it == "." && display.contains(".")) {
+
+                            } else {
+                                display += it
+                            }
+                            amountInput = display
+                        }
+                    })
+                }
+            }
+
+           /* AnimatedVisibility(
+                visible = isShowKeyBoard,
+               *//* enter = slideInVertically(
+                    animationSpec = tween(4000),
                 ),
                 exit = shrinkVertically(
                     shrinkTowards = Alignment.CenterVertically
-                ),
+                ),*//*
+                enter = slideInVertically(initialOffsetY = { -it }),
+                exit = slideOutVertically(targetOffsetY = { -it }),
             ) {
                 KeyBoardLineBgKt(onClick = {
                     var display: String = amountInput
@@ -365,7 +385,8 @@ fun KeyBoardContentScreen() {
                         amountInput = display
                     }
                 })
-            }
+            }*/
+
         }
 
         // Life Cycle
@@ -393,10 +414,11 @@ fun EditTextEnterKeyBoardNumber(
     amountInput: (String) -> Unit,
     isShowKeyBoard: (Boolean) -> Unit,
     keyboardController: SoftwareKeyboardController,
-    behaviour: CursorSelectionBehaviour = CursorSelectionBehaviour.END
 ) {
 
-    /*val direction = LocalLayoutDirection.current
+    /*
+    behaviour: CursorSelectionBehaviour = CursorSelectionBehaviour.END
+    val direction = LocalLayoutDirection.current
     var tfv by remember {
         val selection = when (behaviour) {
             CursorSelectionBehaviour.START -> {
@@ -411,6 +433,9 @@ fun EditTextEnterKeyBoardNumber(
         mutableStateOf(textFieldValue)
     }*/
 
+    var isShowLIneKeyBoard by remember { mutableStateOf(false) }
+
+
     val focusRequester = remember { FocusRequester() }
     val interactionSource = remember { MutableInteractionSource() }
         .also { interactionSource ->
@@ -422,6 +447,13 @@ fun EditTextEnterKeyBoardNumber(
                 }
             }
         }
+
+    AnimatedVisibility(
+        visible = isShowLIneKeyBoard
+    ) {
+        keyboardController.hide()
+        isShowLIneKeyBoard = false
+    }
 
     val textFieldValue = TextFieldValue(text = value, selection = TextRange(value.length)) //place cursor at the end of the text
 
