@@ -9,10 +9,6 @@ import androidx.activity.compose.setContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.expandVertically
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -70,6 +66,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.text.input.getTextAfterSelection
+import androidx.compose.ui.text.input.getTextBeforeSelection
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -142,6 +140,8 @@ fun KeyBoardContentScreen() {
     var remarkInput by remember { mutableStateOf("") }
     var purposeInput by remember { mutableStateOf("") }
 
+    var textFieldValue by remember { mutableStateOf(TextFieldValue("")) }
+
     var currency by remember { mutableStateOf(Dollar) }
 
     var isShowKeyBoard by remember { mutableStateOf(false) }
@@ -198,6 +198,18 @@ fun KeyBoardContentScreen() {
                         value = amountInput,
                         amountInput = {
                             amountInput = it
+                        },
+                        isShowKeyBoard = {
+                            isShowKeyBoard = it
+                        },
+                        keyboardController = keyboardController!!
+                    )
+
+                    EditTextEnterKeyBoardNumber(
+                        label = "Amount 2",
+                        value = textFieldValue,
+                        amountInput = {
+                            textFieldValue = it
                         },
                         isShowKeyBoard = {
                             isShowKeyBoard = it
@@ -340,7 +352,7 @@ fun KeyBoardContentScreen() {
                         .animateContentSize(animationSpec = tween(1000))
                 ) {
                     KeyBoardLineBgKt(onClick = {
-                        var display: String = amountInput
+                        /*var display: String = amountInput
                         if (it.equals("x", ignoreCase = true)) {
                             if (!android.text.TextUtils.isEmpty(display)) {
                                 display = display.substring(0, display.length - 1)
@@ -353,39 +365,26 @@ fun KeyBoardContentScreen() {
                                 display += it
                             }
                             amountInput = display
+                        }*/
+                        var display: TextFieldValue = textFieldValue
+                        if (it.equals("x", ignoreCase = true)) {
+                            if (!android.text.TextUtils.isEmpty(display.text)) {
+                               /* display = display.substring(0, display.length - 1)
+                                amountInput = display*/
+                                display = removeText(display)
+                                textFieldValue = display
+                            }
+                        } else {
+                            if (it == "." && display.text.contains(".")) {
+
+                            } else {
+                                display = insertText(display, it)
+                            }
+                            textFieldValue = display
                         }
                     })
                 }
             }
-
-           /* AnimatedVisibility(
-                visible = isShowKeyBoard,
-               *//* enter = slideInVertically(
-                    animationSpec = tween(4000),
-                ),
-                exit = shrinkVertically(
-                    shrinkTowards = Alignment.CenterVertically
-                ),*//*
-                enter = slideInVertically(initialOffsetY = { -it }),
-                exit = slideOutVertically(targetOffsetY = { -it }),
-            ) {
-                KeyBoardLineBgKt(onClick = {
-                    var display: String = amountInput
-                    if (it.equals("x", ignoreCase = true)) {
-                        if (!android.text.TextUtils.isEmpty(display)) {
-                            display = display.substring(0, display.length - 1)
-                            amountInput = display
-                        }
-                    } else {
-                        if (it == "." && display.contains(".")) {
-
-                        } else {
-                            display += it
-                        }
-                        amountInput = display
-                    }
-                })
-            }*/
 
         }
 
@@ -402,8 +401,96 @@ fun KeyBoardContentScreen() {
     }
 }
 
-enum class CursorSelectionBehaviour {
-    START, END, SELECT_ALL
+private fun removeText(textFieldValue: TextFieldValue): TextFieldValue {
+    val maxChars = textFieldValue.text.length
+    val textBeforeSelection = textFieldValue.getTextBeforeSelection(maxChars)
+    val textAfterSelection = textFieldValue.getTextAfterSelection(maxChars)
+    val textAfterRemove =
+        try {
+            textBeforeSelection.substring(0, textBeforeSelection.length - 1)
+        } catch (e: IllegalArgumentException) {
+            textBeforeSelection
+        }
+
+    val newText = "$textAfterRemove$textAfterSelection"
+    val newCursorPosition = if (textBeforeSelection.isNotEmpty()){
+        textBeforeSelection.length - 1
+    } else {
+        0
+    }
+
+    return TextFieldValue(
+        text = newText,
+        selection = TextRange(newCursorPosition)
+    )
+}
+
+private fun insertText(textFieldValue: TextFieldValue, insertText: String): TextFieldValue {
+    val maxChars = textFieldValue.text.length
+    val textBeforeSelection = textFieldValue.getTextBeforeSelection(maxChars)
+    val textAfterSelection = textFieldValue.getTextAfterSelection(maxChars)
+    val newText = "$textBeforeSelection$insertText$textAfterSelection"
+    val newCursorPosition = textBeforeSelection.length + insertText.length
+
+    return TextFieldValue(
+        text = newText,
+        selection = TextRange(newCursorPosition)
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
+@Composable
+fun EditTextEnterKeyBoardNumber(
+    label: String,
+    value: TextFieldValue,
+    amountInput: (TextFieldValue) -> Unit,
+    isShowKeyBoard: (Boolean) -> Unit,
+    keyboardController: SoftwareKeyboardController,
+) {
+
+    val focusRequester = remember { FocusRequester() }
+    val interactionSource = remember { MutableInteractionSource() }
+        .also { interactionSource ->
+            LaunchedEffect(interactionSource) {
+                interactionSource.interactions.collect {
+                    if (it is PressInteraction.Release) {
+                        keyboardController.hide()
+                    }
+                }
+            }
+        }
+
+    OutlinedTextField(
+        singleLine = true,
+        interactionSource = interactionSource,
+        value = value,
+        label = { Text(label) },
+        onValueChange = {
+            amountInput.invoke(it)
+        },
+        modifier = Modifier
+            .focusRequester(focusRequester)
+            .onFocusEvent { focusState ->
+                keyboardController.hide()
+                if (focusState.isFocused) {
+                    isShowKeyBoard.invoke(true)
+                } else {
+                    isShowKeyBoard.invoke(false)
+                }
+            }
+            .fillMaxWidth()
+            .background(color = Color.Transparent)
+            .padding(horizontal = 5.dp, vertical = 5.dp),
+        keyboardOptions = KeyboardOptions(
+            imeAction =  ImeAction.Done,
+            keyboardType = KeyboardType.Number,
+        ),
+        shape = RoundedCornerShape(8.dp),
+        colors = TextFieldDefaults.outlinedTextFieldColors(
+            focusedBorderColor = Primary,
+            unfocusedBorderColor = Gray
+        )
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
@@ -433,9 +520,6 @@ fun EditTextEnterKeyBoardNumber(
         mutableStateOf(textFieldValue)
     }*/
 
-    var isShowLIneKeyBoard by remember { mutableStateOf(false) }
-
-
     val focusRequester = remember { FocusRequester() }
     val interactionSource = remember { MutableInteractionSource() }
         .also { interactionSource ->
@@ -448,14 +532,7 @@ fun EditTextEnterKeyBoardNumber(
             }
         }
 
-    AnimatedVisibility(
-        visible = isShowLIneKeyBoard
-    ) {
-        keyboardController.hide()
-        isShowLIneKeyBoard = false
-    }
-
-    val textFieldValue = TextFieldValue(text = value, selection = TextRange(value.length)) //place cursor at the end of the text
+    val textFieldValue = TextFieldValue(text = value, selection = TextRange(value.length)) // Place cursor at the end of the text
 
     OutlinedTextField(
         singleLine = true,
