@@ -193,7 +193,7 @@ fun KeyBoardContentScreen() {
                         )
                     }
 
-                    EditTextEnterKeyBoardNumber(
+                    /*EditTextEnterKeyBoardNumber(
                         label = "Amount",
                         value = amountInput,
                         amountInput = {
@@ -203,10 +203,10 @@ fun KeyBoardContentScreen() {
                             isShowKeyBoard = it
                         },
                         keyboardController = keyboardController!!
-                    )
+                    )*/
 
                     EditTextEnterKeyBoardNumber(
-                        label = "Amount 2",
+                        label = "Amount",
                         value = textFieldValue,
                         amountInput = {
                             textFieldValue = it

@@ -4,6 +4,9 @@ sealed class AppScreen(val route: String) {
     object HomeScreen : AppScreen(ConstantAppScreenName.HomeScreen)
     object SeeMoreScreen : AppScreen(ConstantAppScreenName.SeeMoreScreen)
     object NotificationScreen : AppScreen(ConstantAppScreenName.NotificationScreen)
+
+    object KhQrCodeScreen : AppScreen(ConstantAppScreenName.KhQrCodeScreen)
+
     object ProfileScreen : AppScreen(ConstantAppScreenName.ProfileScreen)
 
     object HomeNewScreen : AppScreen(ConstantAppScreenName.HomeNewScreen)
@@ -11,8 +14,6 @@ sealed class AppScreen(val route: String) {
     object UpdateScreen : AppScreen(ConstantAppScreenName.UpdateScreen + "/{id}") {
         fun getItemId(mId : String) : String = "${ConstantAppScreenName.UpdateScreen}/$mId"
     }
-
-    object MAIN_SCREEN : AppScreen("main")
 }
 
 object ConstantAppScreenName {
@@ -22,4 +23,5 @@ object ConstantAppScreenName {
     const val UpdateScreen = "update_screen"
     const val NotificationScreen = "notification_screen"
     const val ProfileScreen = "profile_screen"
+    const val KhQrCodeScreen = "kh_qrcode_screen"
 }

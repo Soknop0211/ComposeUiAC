@@ -250,7 +250,13 @@ fun HomeNewScreen(avController: NavController,
                         Icons.Filled.Notifications
                     )
 
-                    Box(modifier = Modifier.padding(end = 10.dp)) {
+                    Box(
+                        modifier = Modifier
+                        .padding(end = 10.dp)
+                            .clickable {
+                                avController.navigate(AppScreen.KhQrCodeScreen.route)
+                            }
+                    ) {
                         Image(
                             painter = painterResource(id = KhQrLogo),
                             contentDescription = "Localized description",
@@ -259,7 +265,6 @@ fun HomeNewScreen(avController: NavController,
                                 .background(Red)
                                 .padding(3.dp)
                                 .size(18.dp)
-                                .clickable { }
                         )
                     }
                 }
@@ -690,14 +695,12 @@ private fun CardCategoriesItem2(index : Int) {
                         verticalAlignment = Alignment.CenterVertically
                     ){
                         Row {
-                            Icon(
-                                imageVector = Icons.Filled.Info,
-                                contentDescription = "android image",
-                                tint = SecondYellow,
+                            Box(
                                 modifier = Modifier
-                                    .size(15.dp)
+                                    .background(color = SecondYellow, shape = CircleShape)
                                     .align(Alignment.CenterVertically)
-                                    .padding(end = 5.dp)
+                                    .size(8.dp)
+                                    .padding(end = 10.dp)
                             )
 
                             Text(
@@ -705,7 +708,9 @@ private fun CardCategoriesItem2(index : Int) {
                                 style = TextStyle(color = White),
                                 textAlign = TextAlign.Start,
                                 fontFamily = FontFamily(Font(R.font.montserrat_medium_body)),
-                                maxLines = 2
+                                maxLines = 2,
+                                modifier = Modifier
+                                    .padding(start = 5.dp)
                             )
                         }
                         Text(
@@ -725,14 +730,12 @@ private fun CardCategoriesItem2(index : Int) {
                         verticalAlignment = Alignment.CenterVertically
                     ){
                         Row {
-                            Icon(
-                                imageVector = Icons.Filled.Info,
-                                contentDescription = "android image",
-                                tint = SecondYellow,
+                            Box(
                                 modifier = Modifier
+                                    .background(color = BlueLightTxt, shape = CircleShape)
                                     .align(Alignment.CenterVertically)
-                                    .size(15.dp)
-                                    .padding(end = 5.dp)
+                                    .size(8.dp)
+                                    .padding(end = 10.dp)
                             )
 
                             Text(
@@ -740,7 +743,9 @@ private fun CardCategoriesItem2(index : Int) {
                                 style = TextStyle(color = White),
                                 textAlign = TextAlign.Start,
                                 fontFamily = FontFamily(Font(R.font.montserrat_medium_body)),
-                                maxLines = 2
+                                maxLines = 2,
+                                modifier = Modifier
+                                    .padding(start = 5.dp)
                             )
                         }
                         Text(

@@ -5,6 +5,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -24,6 +25,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.KeyboardArrowLeft
+import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -156,7 +158,7 @@ private fun KhQrCodeBody(modifier : Modifier = Modifier) {
                 .weight(1f)
                 .fillMaxWidth()
                 .wrapContentHeight()
-                .padding(10.dp),
+                .padding(vertical = 10.dp, horizontal = 20.dp),
             shape = RoundedCornerShape(10.dp),
             elevation = CardDefaults.cardElevation(
                 defaultElevation = 2.dp
@@ -215,7 +217,7 @@ private fun KhQrCodeBody(modifier : Modifier = Modifier) {
                     Text(
                         modifier = modifier
                             .padding(vertical = 5.dp),
-                        text = "0 ${mCurrency}",
+                        text = "0 $mCurrency",
                         maxLines = 1,
                         fontFamily = fontMedium,
                         color = Black,
@@ -254,10 +256,13 @@ private fun KhQrCodeBody(modifier : Modifier = Modifier) {
         Row(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(horizontal = 10.dp, vertical = 20.dp)
+                .padding(20.dp)
                 .border(1.dp, color = Gray, shape = RoundedCornerShape(10.dp))
                 .padding(horizontal = 10.dp, vertical = 5.dp)
-                .clickable {
+                .clickable (
+                    interactionSource = remember { MutableInteractionSource() },
+                    indication = null
+                ){
                     showAccountDialog = !showAccountDialog  // First false we assign not false is true to show dialog
                 },
             horizontalArrangement = Arrangement.SpaceBetween
@@ -335,7 +340,7 @@ private fun KhQrCodeBody(modifier : Modifier = Modifier) {
             if(it != null) {
                 mNumberPhone = it.numberPhone
                 mAmount = "${it.price} ${it.currency}"
-                mAmount = it.currency
+                mCurrency = it.currency
             }
         }
     }

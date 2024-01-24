@@ -38,6 +38,7 @@ import com.example.aceledacomposeui.ui.screen.AppScreen
 import com.example.aceledacomposeui.ui.ui.HomeNewScreen
 import com.example.aceledacomposeui.ui.ui.HomeScreenKt
 import com.example.aceledacomposeui.ui.ui.ItemDetailKt
+import com.example.aceledacomposeui.ui.ui.KhQrCodeKt
 import com.example.aceledacomposeui.ui.ui.NotificationKt
 import com.example.aceledacomposeui.ui.ui.ProfileKt
 import dagger.hilt.android.AndroidEntryPoint
@@ -132,6 +133,24 @@ fun NavDatabaseGraph(mActivity: Activity) {
             }
         ) {
             NotificationKt(navController = navController)
+        }
+
+        composable(
+            route = AppScreen.KhQrCodeScreen.route,
+            enterTransition = {
+                slideIntoContainer(
+                    AnimatedContentTransitionScope.SlideDirection.Left,
+                    animationSpec = tween(700)
+                )
+            },
+            exitTransition = {
+                slideOutOfContainer(
+                    AnimatedContentTransitionScope.SlideDirection.Right,
+                    animationSpec = tween(700)
+                )
+            }
+        ) {
+            KhQrCodeKt(navController = navController)
         }
 
         /*composable(
