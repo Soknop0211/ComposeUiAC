@@ -3,15 +3,11 @@ package com.example.aceledacomposeui.ui.ui
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
-import android.util.Log
 import androidx.camera.core.ExperimentalGetImage
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.ScrollState
@@ -46,7 +42,6 @@ import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Notifications
@@ -69,7 +64,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -104,11 +98,11 @@ import androidx.compose.ui.util.lerp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import com.example.aceledacomposeui.R
 import com.example.aceledacomposeui.model.HomeExtraModel
 import com.example.aceledacomposeui.model.HomeMainList
 import com.example.aceledacomposeui.ui.screen.AppScreen
+import com.example.aceledacomposeui.ui.screen_activity.AccountActivity
 import com.example.aceledacomposeui.ui.screen_activity.KeyBoardInputActivity
 import com.example.aceledacomposeui.ui.screen_activity.MobileTopUpActivity
 import com.example.aceledacomposeui.ui.screen_activity.ScanQrCodeActivity
@@ -278,7 +272,6 @@ fun HomeNewScreen(avController: NavController,
 
             BodyContent(
                 mActivity,
-                avController,
                 onNavigateToSecondScreen
             )
         }
@@ -377,9 +370,10 @@ fun HomeBody(mActivity: Context,
 
 @androidx.annotation.OptIn(ExperimentalGetImage::class)
 @Composable
-fun BodyContent(mActivity: Activity ?= null,
-                avController: NavController,
-                onNavigateToSecondScreen: () -> Unit = {}) {
+fun BodyContent(
+    mActivity: Activity? = null,
+    onNavigateToSecondScreen: () -> Unit = {}
+) {
     val rememberScrollState = rememberScrollState()
     val horizontalDp = 12.dp
     val localDensity = LocalDensity.current
@@ -511,7 +505,7 @@ private fun CategoriesMenu(mDensity: Density = LocalDensity.current, mActivity: 
                             columnHeightDp = lineHeightDp * 3
                         }
                         .clickable {
-                            menuNext(mList[index].id, mActivity!!)
+                            mActivity!!.menuNext(mList[index].id)
                         },
                     colors = CardDefaults.cardColors(
                         containerColor = ThirdPrimary,
@@ -1574,16 +1568,19 @@ fun FloatingAction(isVisibleButton : Boolean, scrollState: ScrollState) {
     }
 }
 
-fun menuNext(id : String, mContext: Context) {
+private fun Context.menuNext(id : String) {
     when (id) {
         "top_up" -> {
-            MobileTopUpActivity.start(mContext)
+            MobileTopUpActivity.start(this)
         }
         "scan_qr" -> {
-            ScanQrCodeActivity.start(mContext)
+            ScanQrCodeActivity.start(this)
         }
         "pay_me" -> {
-            KeyBoardInputActivity.start(mContext)
+            KeyBoardInputActivity.start(this)
+        }
+        "account" -> {
+            AccountActivity.start(this)
         }
     }
 }
@@ -1593,6 +1590,6 @@ fun menuNext(id : String, mContext: Context) {
 @Composable
 fun HomeNewPreview() {
     AceledaComposeUITheme {
-        BodyContent(avController = rememberNavController())
+        BodyContent()
     }
 }
