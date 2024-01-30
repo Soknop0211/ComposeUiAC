@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -43,9 +44,11 @@ import androidx.compose.material.icons.outlined.ExitToApp
 import androidx.compose.material.icons.outlined.KeyboardArrowRight
 import androidx.compose.material.icons.outlined.LocationOn
 import androidx.compose.material.icons.outlined.Lock
+import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material.icons.outlined.Phone
 import androidx.compose.material.ripple.rememberRipple
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -86,6 +89,7 @@ import com.example.aceledacomposeui.R
 import com.example.aceledacomposeui.data.PreferenceManager
 import com.example.aceledacomposeui.model.NotificationModel
 import com.example.aceledacomposeui.model.User
+import com.example.aceledacomposeui.ui.NotificationAlert
 import com.example.aceledacomposeui.ui.theme.AceledaComposeUITheme
 import com.example.aceledacomposeui.ui.theme.AcledaAppLogo
 import com.example.aceledacomposeui.ui.theme.Black
@@ -97,6 +101,9 @@ import com.example.aceledacomposeui.ui.theme.Yellow
 import com.example.aceledacomposeui.ui.widget.ToolAppBar
 import com.example.aceledacomposeui.utils.Constants
 import com.example.aceledacomposeui.utils.Utils
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.isGranted
+import com.google.accompanist.permissions.rememberPermissionState
 
 @Composable
 fun ProfileKt(
@@ -255,6 +262,8 @@ fun ProfileKt(
                 item {
                     ProfileKtItem(mTitle = "Change PIN", mImageVector = Icons.Outlined.Lock)
 
+                    ProfileKtItem(mTitle = "Push Notification", mImageVector = Icons.Outlined.Notifications)
+
                     ProfileKtItem(mTitle = "Log out", mImageVector = Icons.Outlined.ExitToApp)
                 }
 
@@ -282,12 +291,23 @@ fun ProfileKt(
     }
 }
 
+@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun ProfileKtItem(
     modifier: Modifier = Modifier,
     mTitle : String,
     mImageVector : ImageVector
 ) {
+    val mContext = LocalContext.current
+    val postNotificationPermission=
+        rememberPermissionState(permission = Manifest.permission.POST_NOTIFICATIONS)
+    val waterNotificationService = NotificationAlert(mContext)
+    LaunchedEffect(key1 = true ){
+        if(!postNotificationPermission.status.isGranted){
+            postNotificationPermission.launchPermissionRequest()
+        }
+    }
+
     Card(
         modifier = modifier
             .fillMaxWidth()
@@ -295,7 +315,15 @@ fun ProfileKtItem(
             .clickable (
                 interactionSource = remember { MutableInteractionSource() },
                 indication = rememberRipple(color = Primary),
-            ){}
+            ){
+                if (mTitle.equals("Push Notification", true)) {
+                    /*"Show basic notifications"*/
+                    waterNotificationService.showBasicNotification()
+
+                    /*"Show Expandable notifications"
+                    waterNotificationService.showExpandableNotification()*/
+                }
+            }
             .shadow(
                 shape = RoundedCornerShape(5.dp),
                 ambientColor = Primary,

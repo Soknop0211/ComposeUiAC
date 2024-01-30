@@ -162,4 +162,7 @@ dependencies {
 
     implementation("androidx.compose.ui:ui:1.5.0-beta01")
     implementation("androidx.navigation:navigation-compose:2.7.0-beta01")
+
+    // Notification
+    implementation("com.google.accompanist:accompanist-permissions:0.31.1-alpha")
 }
