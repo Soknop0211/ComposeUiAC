@@ -1,13 +1,19 @@
 package com.example.aceledacomposeui.utils
 
+import android.annotation.SuppressLint
 import android.app.Activity
+import android.content.ContentResolver
+import android.content.ContentValues
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Matrix
 import android.media.ExifInterface
 import android.net.Uri
+import android.os.Build
+import android.os.Environment
 import android.provider.MediaStore
+import android.text.format.DateFormat
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
@@ -21,9 +27,15 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import java.io.ByteArrayOutputStream
 import java.io.File
+import java.io.FileInputStream
+import java.io.FileNotFoundException
+import java.io.FileOutputStream
 import java.io.IOException
 import java.lang.reflect.Type
 import java.nio.charset.StandardCharsets
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 
 object Utils {
@@ -349,4 +361,135 @@ object Utils {
         inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
     }
 
+    fun saveImage(context: Context, bitmap: Bitmap, nameDir: String, extension: String) {
+        var name = nameDir
+        name = "$name.$extension"
+        val fileOutputStream: FileOutputStream
+        try {
+            fileOutputStream = context.openFileOutput(name, Context.MODE_PRIVATE)
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 90, fileOutputStream)
+            fileOutputStream.close()
+        } catch (e: java.lang.Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    fun loadImageBitmap(context: Context, nameDir: String, extension: String): Bitmap? {
+        var name = nameDir
+        name = "$name.$extension"
+        val fileInputStream: FileInputStream
+        var bitmap: Bitmap? = null
+        try {
+            fileInputStream = context.openFileInput(name)
+            bitmap = BitmapFactory.decodeStream(fileInputStream)
+            fileInputStream.close()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        return bitmap
+    }
+
+    fun saveImageToGallery(ctx: Context, bitmap: Bitmap?) {
+        val fileName = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(Date())
+
+        val contentResolver: ContentResolver = ctx.contentResolver
+        val imageUri: Uri?
+        val contentValues = ContentValues().apply {
+            put(MediaStore.MediaColumns.DISPLAY_NAME, fileName)
+            put(MediaStore.MediaColumns.MIME_TYPE, "image/jpeg")
+            bitmap?.let {
+                put(MediaStore.Images.Media.WIDTH, bitmap.width)
+                put(MediaStore.Images.Media.HEIGHT, bitmap.height)
+            }
+        }
+
+        "${Build.VERSION.SDK_INT}  ${Build.VERSION_CODES.Q}".logDebug("jeeeeeeeeeeeeeeeeeeeeeee")
+
+        imageUri = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            /*contentValues.put(MediaStore.MediaColumns.RELATIVE_PATH,
+                Environment.DIRECTORY_PICTURES + File.separator.toString() + ctx.getString(R.string.app_name))*/
+
+            contentValues.put(MediaStore.MediaColumns.RELATIVE_PATH, createImageFile(ctx))
+            MediaStore.Images.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY)
+        } else {
+            MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+        }
+
+        try {
+            val uri = contentResolver.insert(imageUri, contentValues)
+            val fos = uri?.let { contentResolver.openOutputStream(it) }
+            if (fos != null) {
+                bitmap?.compress(Bitmap.CompressFormat.JPEG, 100, fos)
+            }
+            ctx.toast("Image Saved")
+        } catch (e: Exception) {
+            ctx.toast("Image Not Saved \n$e")
+        }
+    }
+
+    @SuppressLint("SimpleDateFormat")
+    @Throws(IOException::class)
+    private fun createImageFile(ctx: Context): String? {
+        // Create an image file name
+        val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
+        val imageFileName = "JPEG_" + timeStamp + "_"
+        val storageDir: File? = ctx.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+        /*val image = File.createTempFile(
+            imageFileName,  *//* prefix *//*
+            ".jpg",  *//* suffix *//*
+            storageDir *//* directory *//*
+        )*/
+
+        val image = setUpPhotoFile(ctx)
+
+        // Save a file: path for use with ACTION_VIEW intents
+        return image?.absolutePath
+    }
+
+    private fun setUpPhotoFile(ctx: Context): File? {
+        val fileName = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(Date())
+        return createImageFile(ctx, fileName)
+    }
+
+    private fun createImageFile(ctx: Context, fileName: String): File? {
+        val albumF = getAlbumDir(ctx)
+        return File(albumF, "$fileName.jpg")
+    }
+
+    private fun getAlbumDir(ctx : Context): File? {
+        var storageDir: File? = null
+        if (Environment.MEDIA_MOUNTED == Environment.getExternalStorageState()) {
+            storageDir = File(ctx.getString(R.string.app_name))
+            "${storageDir.mkdirs()}".logDebug()
+            if (!storageDir.mkdirs()) {
+                if (!storageDir.exists()) {
+                    return null
+                }
+            }
+        } else {
+            "External storage is not mounted READ/WRITE.".logDebug()
+        }
+        return storageDir
+    }
+
+
+    private fun takeScreenShot(view: View, dir: File): File? {
+        try {
+            view.isDrawingCacheEnabled = true
+            val bitmap: Bitmap = Bitmap.createBitmap(view.drawingCache)
+            view.isDrawingCacheEnabled = false
+            val dateText = DateFormat.format("yyyy-MM-dd_hh:mm:ss", Date())
+            val imageFile = File("$dir/result-$dateText.jpeg")
+            FileOutputStream(imageFile).use { fos ->
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 50, fos)
+                fos.flush()
+            }
+            return imageFile
+        } catch (e: FileNotFoundException) {
+            e.printStackTrace()
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+        return null
+    }
 }

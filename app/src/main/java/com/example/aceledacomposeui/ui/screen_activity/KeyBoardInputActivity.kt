@@ -66,8 +66,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
-import androidx.compose.ui.text.input.getTextAfterSelection
-import androidx.compose.ui.text.input.getTextBeforeSelection
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -86,6 +84,8 @@ import com.example.aceledacomposeui.ui.widget.DottedShape
 import com.example.aceledacomposeui.ui.widget.ToolAppBar
 import com.example.aceledacomposeui.utils.Constants.Dollar
 import com.example.aceledacomposeui.utils.Constants.Khmer
+import com.example.aceledacomposeui.utils.insertText
+import com.example.aceledacomposeui.utils.removeText
 
 class KeyBoardInputActivity : ComponentActivity() {
 
@@ -371,14 +371,14 @@ fun KeyBoardContentScreen() {
                             if (!android.text.TextUtils.isEmpty(display.text)) {
                                /* display = display.substring(0, display.length - 1)
                                 amountInput = display*/
-                                display = removeText(display)
+                                display = display.removeText()
                                 textFieldValue = display
                             }
                         } else {
                             if (it == "." && display.text.contains(".")) {
 
                             } else {
-                                display = insertText(display, it)
+                                display = display.insertText(it)
                             }
                             textFieldValue = display
                         }
@@ -399,43 +399,6 @@ fun KeyBoardContentScreen() {
         }
 
     }
-}
-
-private fun removeText(textFieldValue: TextFieldValue): TextFieldValue {
-    val maxChars = textFieldValue.text.length
-    val textBeforeSelection = textFieldValue.getTextBeforeSelection(maxChars)
-    val textAfterSelection = textFieldValue.getTextAfterSelection(maxChars)
-    val textAfterRemove =
-        try {
-            textBeforeSelection.substring(0, textBeforeSelection.length - 1)
-        } catch (e: IllegalArgumentException) {
-            textBeforeSelection
-        }
-
-    val newText = "$textAfterRemove$textAfterSelection"
-    val newCursorPosition = if (textBeforeSelection.isNotEmpty()){
-        textBeforeSelection.length - 1
-    } else {
-        0
-    }
-
-    return TextFieldValue(
-        text = newText,
-        selection = TextRange(newCursorPosition)
-    )
-}
-
-private fun insertText(textFieldValue: TextFieldValue, insertText: String): TextFieldValue {
-    val maxChars = textFieldValue.text.length
-    val textBeforeSelection = textFieldValue.getTextBeforeSelection(maxChars)
-    val textAfterSelection = textFieldValue.getTextAfterSelection(maxChars)
-    val newText = "$textBeforeSelection$insertText$textAfterSelection"
-    val newCursorPosition = textBeforeSelection.length + insertText.length
-
-    return TextFieldValue(
-        text = newText,
-        selection = TextRange(newCursorPosition)
-    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)

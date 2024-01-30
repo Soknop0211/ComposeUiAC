@@ -1,4 +1,4 @@
-package com.example.aceledacomposeui.ui.repository
+package com.example.aceledacomposeui.repository
 
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences

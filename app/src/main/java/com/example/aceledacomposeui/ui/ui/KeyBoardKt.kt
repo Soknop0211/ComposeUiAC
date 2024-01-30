@@ -176,6 +176,7 @@ fun KeyBoardKt(onClick: (String) -> Unit, mDensity: Density = LocalDensity.curre
             .background(color = GrayBg)
     ) {
         LazyVerticalGrid(
+            userScrollEnabled = false,
             modifier = Modifier
                 .height((columnHeightDp))
                 .fillMaxWidth(),
@@ -356,6 +357,7 @@ fun KeyBoardLineBgKt(onClick: (String) -> Unit, mDensity: Density = LocalDensity
             .background(color = White)
     ) {
         LazyVerticalGrid(
+            userScrollEnabled = false,
             modifier = Modifier
                 .height((columnHeightDp))
                 .fillMaxWidth(),

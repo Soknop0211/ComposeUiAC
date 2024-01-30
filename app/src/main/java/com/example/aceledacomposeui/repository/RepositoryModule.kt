@@ -1,4 +1,4 @@
-package com.example.aceledacomposeui.ui.repository
+package com.example.aceledacomposeui.repository
 
 import com.google.mlkit.vision.barcode.common.Barcode
 import com.google.mlkit.vision.codescanner.GmsBarcodeScanner

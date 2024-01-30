@@ -1,4 +1,4 @@
-package com.example.aceledacomposeui.ui.repository
+package com.example.aceledacomposeui.repository
 
 import android.app.Application
 import android.content.Context
@@ -51,6 +51,5 @@ object NetworkModule {
             corruptionHandler = ReplaceFileCorruptionHandler(produceNewData = { emptyPreferences() }),
             produceFile = { context.preferencesDataStoreFile(Session.DATA) })
     }
-
 
 }

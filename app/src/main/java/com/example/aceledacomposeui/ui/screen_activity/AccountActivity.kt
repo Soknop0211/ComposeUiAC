@@ -63,7 +63,9 @@ import com.example.aceledacomposeui.ui.theme.Red
 import com.example.aceledacomposeui.ui.theme.SecondPrimary
 import com.example.aceledacomposeui.ui.theme.SecondYellow
 import com.example.aceledacomposeui.ui.theme.White
+import com.example.aceledacomposeui.ui.theme.dp10
 import com.example.aceledacomposeui.ui.theme.sp12
+import com.example.aceledacomposeui.ui.theme.sp18
 import com.example.aceledacomposeui.ui.widget.BottomShadow
 import com.example.aceledacomposeui.ui.widget.ToolAppBar
 import kotlinx.coroutines.launch
@@ -210,128 +212,135 @@ private fun AccountContent(index : Int = 0) {
                 BankAccountModel("5", "Saving Account", "0001-09987878-13", "KHR", "100.00")
             )
         } else {
-            arrayListOf(
-                BankAccountModel("1", "Wallet Account", "097 1206 897", "KHR", "100,000"),
-                BankAccountModel("2", "Wallet Account", "097 1206 897", "USD", "100.00")
-            )
+            arrayListOf()
         }
 
-    LazyColumn {
-        items(mList) {
-            Column {
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .shadow(
-                            shape = RoundedCornerShape(0.dp),
-                            ambientColor = Primary,
-                            spotColor = Primary,
-                            elevation = 10.dp
-                        ),
-                    shape = RoundedCornerShape(0.dp),
-                    elevation = CardDefaults.cardElevation(
-                        defaultElevation = 10.dp
-                    ),
-                    colors = CardDefaults.cardColors(
-                        containerColor = White
-                    )
-                ) {
-                    Row (
+    Box (
+        modifier = Modifier
+            .fillMaxSize(),
+    ){
+        LazyColumn {
+            items(mList) {
+                Column {
+                    Card(
                         modifier = Modifier
-                            .padding(5.dp)
-                            .fillMaxSize()
-                    ){
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_currency_exchange),
-                            contentDescription = "android image",
-                            tint = Primary,
-                            modifier = Modifier
-                                .size(30.dp)
-                                .align(Alignment.CenterVertically)
-                                .padding(start = 5.dp)
+                            .fillMaxWidth()
+                            .shadow(
+                                shape = RoundedCornerShape(0.dp),
+                                ambientColor = Primary,
+                                spotColor = Primary,
+                                elevation = 10.dp
+                            ),
+                        shape = RoundedCornerShape(0.dp),
+                        elevation = CardDefaults.cardElevation(
+                            defaultElevation = 10.dp
+                        ),
+                        colors = CardDefaults.cardColors(
+                            containerColor = White
                         )
-
-                        Row(
+                    ) {
+                        Row (
                             modifier = Modifier
+                                .padding(5.dp)
                                 .fillMaxSize()
-                                .weight(weight = 1f, fill = false)
-                                .padding(horizontal = 10.dp, vertical = 5.dp),
-                            horizontalArrangement = Arrangement.SpaceBetween
-                        ) {
-                            Column (
+                        ){
+                            Icon(
+                                painter = painterResource(id = R.drawable.ic_currency_exchange),
+                                contentDescription = "android image",
+                                tint = Primary,
                                 modifier = Modifier
-                                    .weight(weight = 1f, fill = false)
-                                    .padding(horizontal = 5.dp)
-                            ){
-                                Text(
-                                    modifier = Modifier
-                                        .wrapContentSize(),
-                                    text = it.numberPhone,
-                                    fontFamily = FontFamily(Font(R.font.montserrat_medium_body)),
-                                    color = Black,
-                                    maxLines = 1,
-                                )
+                                    .size(30.dp)
+                                    .align(Alignment.CenterVertically)
+                                    .padding(start = 5.dp)
+                            )
 
-                                Text(
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .weight(weight = 1f, fill = false)
+                                    .padding(horizontal = 10.dp, vertical = 5.dp),
+                                horizontalArrangement = Arrangement.SpaceBetween
+                            ) {
+                                Column (
                                     modifier = Modifier
-                                        .fillMaxWidth(),
-                                    text = "Available balance",
-                                    maxLines = 1,
-                                    fontFamily = FontFamily(Font(R.font.montserrat_medium_body)),
-                                    color = Gray,
-                                    style = TextStyle(fontSize = 14.sp)
-                                )
+                                        .weight(weight = 1f, fill = false)
+                                        .padding(horizontal = 5.dp)
+                                ){
+                                    Text(
+                                        modifier = Modifier
+                                            .wrapContentSize(),
+                                        text = it.numberPhone,
+                                        fontFamily = FontFamily(Font(R.font.montserrat_medium_body)),
+                                        color = Black,
+                                        maxLines = 1,
+                                    )
+
+                                    Text(
+                                        modifier = Modifier
+                                            .fillMaxWidth(),
+                                        text = "Available balance",
+                                        maxLines = 1,
+                                        fontFamily = FontFamily(Font(R.font.montserrat_medium_body)),
+                                        color = Gray,
+                                        style = TextStyle(fontSize = 14.sp)
+                                    )
+                                }
+
+                                Column (
+                                    modifier = Modifier
+                                        .weight(weight = 1f, fill = false)
+                                        .padding(horizontal = 5.dp)
+                                ){
+                                    Text(
+                                        modifier = Modifier
+                                            .fillMaxWidth(),
+                                        text = it.accountName,
+                                        overflow = TextOverflow.Ellipsis,
+                                        fontFamily = FontFamily(Font(R.font.montserrat_medium_body)),
+                                        color = Black,
+                                        maxLines = 1,
+                                        textAlign = TextAlign.End,
+                                    )
+
+                                    Text(
+                                        modifier = Modifier
+                                            .fillMaxWidth(),
+                                        textAlign = TextAlign.End,
+                                        text = "${it.price} ${it.currency}",
+                                        maxLines = 1,
+                                        fontFamily = FontFamily(Font(R.font.montserrat_medium_body)),
+                                        color = SecondYellow,
+                                        style = TextStyle(fontSize = 14.sp)
+                                    )
+                                }
                             }
 
-                            Column (
+                            Icon(
+                                painter = painterResource(id = R.drawable.baseline_more_horiz_24),
+                                contentDescription = "android image",
+                                tint = Gray,
                                 modifier = Modifier
-                                    .weight(weight = 1f, fill = false)
-                                    .padding(horizontal = 5.dp)
-                            ){
-                                Text(
-                                    modifier = Modifier
-                                        .fillMaxWidth(),
-                                    text = it.accountName,
-                                    overflow = TextOverflow.Ellipsis,
-                                    fontFamily = FontFamily(Font(R.font.montserrat_medium_body)),
-                                    color = Black,
-                                    maxLines = 1,
-                                    textAlign = TextAlign.End,
-                                )
-
-                                Text(
-                                    modifier = Modifier
-                                        .fillMaxWidth(),
-                                    textAlign = TextAlign.End,
-                                    text = "${it.price} ${it.currency}",
-                                    maxLines = 1,
-                                    fontFamily = FontFamily(Font(R.font.montserrat_medium_body)),
-                                    color = SecondYellow,
-                                    style = TextStyle(fontSize = 14.sp)
-                                )
-                            }
+                                    .size(30.dp)
+                                    .align(Alignment.Top)
+                                    .padding(start = 5.dp)
+                            )
                         }
-
-                        Icon(
-                            painter = painterResource(id = R.drawable.baseline_more_horiz_24),
-                            contentDescription = "android image",
-                            tint = Gray,
-                            modifier = Modifier
-                                .size(30.dp)
-                                .align(Alignment.Top)
-                                .padding(start = 5.dp)
-                        )
                     }
-                }
 
-                BottomShadow(height = 5.dp)
+                    BottomShadow(height = 2.dp)
+                }
+            }
+
+            item {
+                Spacer(modifier = Modifier.padding(10.dp))
             }
         }
 
-        item {
-            Spacer(modifier = Modifier.padding(10.dp))
+        if (mList.isEmpty()) {
+            NoItemDisplay()
         }
     }
+
 }
 
 data class TabItem(
@@ -341,39 +350,43 @@ data class TabItem(
 )
 
 @Composable
-fun SimpleTabLayout() {
-    val titles = listOf("Tab 1", "Tab 2", "Tab 3")
-    var tabIndex by remember { mutableIntStateOf(0) }
-
-    Scaffold(
-        topBar = {
-            TabRow(selectedTabIndex = tabIndex) {
-                titles.forEachIndexed { index, title ->
-                    Tab(
-                        text = { Text(title) },
-                        selected = tabIndex == index,
-                        onClick = { tabIndex = index }
-                    )
-                }
-            }
-        },
-        content = { paddingValues ->
-            Column(
+private fun NoItemDisplay(modifier : Modifier = Modifier) {
+    Box(
+        modifier = modifier
+            .fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        Column(
+            verticalArrangement = Arrangement.Top,
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            Icon(
+                painter = painterResource(id = R.drawable.ic_account_payment),
+                contentDescription = "android image",
+                tint = Primary,
                 modifier = Modifier
-                    .padding(paddingValues)
-                    .fillMaxSize(),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text(text = "Selected page: ${titles[tabIndex]}")
-            }
+                    .padding(start = 5.dp)
+            )
+
+            Text(
+                modifier = Modifier
+                    .padding(top = dp10)
+                    .fillMaxWidth(),
+                textAlign = TextAlign.Center,
+                text = "No Item",
+                maxLines = 1,
+                fontFamily = FontFamily(Font(R.font.montserrat_medium_body)),
+                color = Primary,
+                style = TextStyle(fontSize = sp18)
+            )
         }
-    )
+    }
+
 }
 
 @Preview(showBackground = true)
 @Composable
-fun GreetingPreview2() {
+fun AccountPreview() {
     AceledaComposeUITheme {
         AccountBody()
     }
