@@ -120,11 +120,22 @@ import com.example.aceledacomposeui.utils.convertUriToBitmap
 import com.example.aceledacomposeui.utils.insertText
 import com.example.aceledacomposeui.utils.removeText
 import com.example.aceledacomposeui.utils.shareLink
+import com.example.aceledacomposeui.utils.toast
+import kotlinx.coroutines.delay
 import kotlin.math.roundToInt
+import kotlin.time.Duration.Companion.seconds
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun KhQrCodeKt(navController : NavController) {
+
+    var mIsLoading by remember { mutableStateOf(false) }
+
+    LaunchedEffect(Unit) {
+        delay(1.5.seconds)
+        mIsLoading = false
+    }
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -177,13 +188,19 @@ fun KhQrCodeKt(navController : NavController) {
                 .background(color = LightGray),
             contentAlignment = Alignment.Center
         ){
-            KhQrCodeBody()
+            KhQrCodeBody {
+                mIsLoading = true
+            }
+
         }
     }
 }
 
 @Composable
-private fun KhQrCodeBody(modifier : Modifier = Modifier, context: Context = LocalContext.current) {
+private fun KhQrCodeBody(modifier : Modifier = Modifier,
+                         context: Context = LocalContext.current,
+                         mUnitCallBack : () -> Unit
+) {
     var showAccountDialog by remember {
         mutableStateOf(false)
     }
@@ -225,10 +242,14 @@ private fun KhQrCodeBody(modifier : Modifier = Modifier, context: Context = Loca
                 val mBitmap = mBitmap(capturingViewBounds, view)
 
                 if (mBitmap != null) {
-                    Utils.saveImageToGallery(context, mBitmap)
+                    // Utils.saveImageToGallery(context, mBitmap)
+
+                    mUnitCallBack()
+
+                    Utils.saveBitmapImage(context, mBitmap)
                 }
             } else {
-                Log.e("MainActivity", "ERROR PERMISSION NOT GRANTED")
+                context.toast("PERMISSION NOT GRANTED")
             }
         }
     )

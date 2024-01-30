@@ -14,6 +14,7 @@ import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
 import android.text.format.DateFormat
+import android.util.Log
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
@@ -31,6 +32,7 @@ import java.io.FileInputStream
 import java.io.FileNotFoundException
 import java.io.FileOutputStream
 import java.io.IOException
+import java.io.OutputStream
 import java.lang.reflect.Type
 import java.nio.charset.StandardCharsets
 import java.text.SimpleDateFormat
@@ -390,6 +392,15 @@ object Utils {
     }
 
     fun saveImageToGallery(ctx: Context, bitmap: Bitmap?) {
+        // Test Create Dir Storage
+        val storageDir: File? = ctx.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+        val path = storageDir?.absolutePath.toString() + "/storage/emulated/0/appFolder"
+
+        val mFolder = File(path)
+        if (!mFolder.exists()) {
+            mFolder.mkdir()
+        }
+
         val fileName = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(Date())
 
         val contentResolver: ContentResolver = ctx.contentResolver
@@ -491,5 +502,65 @@ object Utils {
             e.printStackTrace()
         }
         return null
+    }
+
+    fun saveBitmapImage(ctx : Context, bitmap: Bitmap) {
+        val timestamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(Date())
+        val timestampp = System.currentTimeMillis()
+
+        //Tell the media scanner about the new file so that it is immediately available to the user.
+        val values = ContentValues()
+        values.put(MediaStore.Images.Media.MIME_TYPE, "image/png")
+        values.put(MediaStore.Images.Media.DATE_ADDED, timestamp)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            values.put(MediaStore.Images.Media.DATE_TAKEN, timestamp)
+            values.put(MediaStore.Images.Media.RELATIVE_PATH, "Pictures/" + ctx.getString(R.string.app_name))
+            values.put(MediaStore.Images.Media.IS_PENDING, true)
+            val uri = ctx.contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)
+            if (uri != null) {
+                try {
+                    val outputStream = ctx.contentResolver.openOutputStream(uri)
+                    if (outputStream != null) {
+                        try {
+                            bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
+                            outputStream.close()
+                        } catch (e: Exception) {
+                            Log.e("TAG", "saveBitmapImage: ", e)
+                        }
+                    }
+                    values.put(MediaStore.Images.Media.IS_PENDING, false)
+                    ctx.contentResolver.update(uri, values, null, null)
+
+                    Toast.makeText(ctx, "Saved...", Toast.LENGTH_SHORT).show()
+                } catch (e: Exception) {
+                    Log.e("TAG", "saveBitmapImage: ", e)
+                }
+            }
+        } else {
+            val imageFileFolderr = File(Environment.getExternalStorageDirectory().toString() + '/' + ctx.getString(R.string.app_name))
+            val imageFileFolderrr = File("/storage/emulated/0/Pictures/" + ctx.getString(R.string.app_name))
+
+            val imageFileFolder = File(Environment.getExternalStorageDirectory().toString() + '/' + Environment.DIRECTORY_PICTURES.toString()  + '/' + ctx.getString(R.string.app_name))
+            if (!imageFileFolder.exists()) {
+                imageFileFolder.mkdirs()
+            }
+            val mImageName = "$timestamp.png"
+            val imageFile = File(imageFileFolder, mImageName)
+            try {
+                val outputStream: OutputStream = FileOutputStream(imageFile)
+                try {
+                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
+                    outputStream.close()
+                } catch (e: Exception) {
+                    Log.e("TAG", "saveBitmapImage: ", e)
+                }
+                values.put(MediaStore.Images.Media.DATA, imageFile.absolutePath)
+                ctx.contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)
+
+                Toast.makeText(ctx, "Saved Image...", Toast.LENGTH_SHORT).show()
+            } catch (e: Exception) {
+                Log.e("TAG", "saveBitmapImage: ", e)
+            }
+        }
     }
 }
